@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">PopCornMiner</string>
+    <string name="botao_saldo">Saldo</string>
+    <string name="botao_carteira">Carteira</string>
+    <string name="botao_transferencia">Transferência</string>
+    <string name="title_activity_saldo">SaldoActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_carteira">CarteiraActivity</string>
+    <string name="chave_publica">Chave Pública</string>
+    <string name="digite_sua_chave_publica">Digite sua chave pública</string>
+    <string name="chave_privada">Chave Privada</string>
+    <string name="digite_sua_chave_privada">Digite sua chave privada</string>
+    <string name="descricao">Descrição</string>
+    <string name="digite_a_descricao">Digite a descrição</string>
+    <string name="adicionar">Adicionar</string>
+</resources>
