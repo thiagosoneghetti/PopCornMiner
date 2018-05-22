@@ -9,54 +9,72 @@
     tools:context=".AddCarteiraActivity">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/txtDescricaoId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="@string/chave_publica"
+        android:text="Carteira utilizada:"
         android:textSize="24sp"
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/editChavePublicaId"
+        android:id="@+id/editDescricaoTransfId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
         android:layout_marginTop="5dp"
         android:ems="10"
-        android:hint="@string/digite_sua_chave_publica"
+        android:hint="@string/descricao"
+        android:inputType="none"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/txtCPublicaDestinoId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Chave Pública do Destinatário:"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/editCPublicaDestinoId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="5dp"
+        android:ems="10"
+        android:hint="Insira a chave pública do destinatário"
         android:inputType="textPersonName"
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/txtVarlorTransfId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="@string/descricao"
+        android:text="Valor UC:"
         android:textSize="24sp"
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/editDescricaoId"
+        android:id="@+id/editValorTransfId"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
-        android:layout_marginTop="5dp"
         android:ems="10"
-        android:hint="@string/digite_a_descricao"
-        android:inputType="textPersonName"
-        android:textSize="18sp" />
+        android:hint="Insira o valor a ser transferido"
+        android:inputType="number" />
 
     <Button
-        android:id="@+id/btSalvarCarteiraId"
+        android:id="@+id/btTransferirId"
         android:layout_width="259dp"
         android:layout_height="67dp"
         android:layout_gravity="center"
         android:layout_marginTop="35dp"
         android:gravity="center_vertical|center"
-        android:text="@string/adicionar"
+        android:text="Transferir"
         android:textSize="24sp" />
+
 </LinearLayout>

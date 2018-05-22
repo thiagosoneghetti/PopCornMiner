@@ -8,16 +8,17 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.List;
+
 import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.Carteira;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
 
-public class CarteiraAdpter extends BaseAdapter {
+public class TransferenciaAdpter extends BaseAdapter {
     //http://blog.alura.com.br/personalizando-uma-listview-no-android/
 
     List<Carteira> carteiras;
     Context context;
 
-    public CarteiraAdpter(Context context, List<Carteira> carteiras){
+    public TransferenciaAdpter(Context context, List<Carteira> carteiras){
         this.context = context;
         this.carteiras = carteiras;
     }
@@ -42,12 +43,12 @@ public class CarteiraAdpter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = LayoutInflater.from(context).inflate(R.layout.adapter_lista_carteira,null);
+        View view = LayoutInflater.from(context).inflate(R.layout.adapter_lista_transferencia,null);
         Carteira carteira = carteiras.get(position);
 
         // Pegando elementos da View pelo ID
-        TextView txtDescricao = (TextView) view.findViewById(R.id.itListaCarteiraDescricao);
-        TextView txtChavePublica = (TextView) view.findViewById(R.id.itListaCarteiraChavePublica);
+        TextView txtDescricao = (TextView) view.findViewById(R.id.itListaTransferenciaDescricao);
+        TextView txtChavePublica = (TextView) view.findViewById(R.id.itListaTransferenciaChavePublica);
 
         // Inserindo os dados do elemento na view
         txtDescricao.setText(carteira.getDescricao());

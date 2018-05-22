@@ -4,14 +4,21 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Adapter;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import popcornminer.thiagosoneghetti.com.br.popcornminer.Adapter.CarteiraAdpter;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.Adapter.TransferenciaAdpter;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.Banco.CarteiraOpenHelper;
 
 public class CarteiraDao {
     private CarteiraOpenHelper dbHelper;
+    private CarteiraAdpter carteiraAdpter;
+    private TransferenciaAdpter transferenciaAdpter;
+
     //https://developer.android.com/training/data-storage/sqlite?hl=pt-Br#kotlin
 
     public static final String TABELA = "carteira";
@@ -74,6 +81,7 @@ public class CarteiraDao {
 
         return carteiras;
     }
+
 
     public void removerCarteira (Long id){
         SQLiteDatabase db = dbHelper.getWritableDatabase();

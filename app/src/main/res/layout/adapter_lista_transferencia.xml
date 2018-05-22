@@ -7,22 +7,24 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/imageViewListaCarteira"
+        android:id="@+id/imageViewListaTransferencia"
         android:layout_width="71dp"
         android:layout_height="62dp"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/ic_carteira_uc"
+        android:background="@drawable/ic_transferencia_uc"
         android:contentDescription="TODO"
+        android:hapticFeedbackEnabled="false"
+        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
         //app:srcCompat="@drawable/iconecarteira"
-        tools:ignore="MissingConstraints" />
+         tools:ignore="MissingConstraints" />
 
     <TextView
-        android:id="@+id/itListaCarteiraDescricao"
+        android:id="@+id/itListaTransferenciaDescricao"
         android:layout_width="296dp"
         android:layout_height="39dp"
         android:layout_marginEnd="8dp"
@@ -35,21 +37,22 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.111"
-        app:layout_constraintStart_toEndOf="@+id/imageViewListaCarteira"
+        app:layout_constraintStart_toEndOf="@+id/imageViewListaTransferencia"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
 
     <TextView
-        android:id="@+id/itListaCarteiraChavePublica"
+        android:id="@+id/itListaTransferenciaChavePublica"
         android:layout_width="0dp"
         android:layout_height="22dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="5dp"
         android:gravity="center_vertical"
+        android:paddingLeft="1dp"
         android:text="@string/chave_publica"
         android:textSize="8sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageViewListaCarteira"
-        app:layout_constraintTop_toBottomOf="@+id/itListaCarteiraDescricao"
+        app:layout_constraintStart_toEndOf="@+id/imageViewListaTransferencia"
+        app:layout_constraintTop_toBottomOf="@+id/itListaTransferenciaDescricao"
         tools:ignore="MissingConstraints" />
 </android.support.constraint.ConstraintLayout>

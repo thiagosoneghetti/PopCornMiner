@@ -16,23 +16,14 @@ import android.widget.Toast;
 import java.util.List;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.Adapter.CarteiraAdpter;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Requests.carteiraRequests;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.Carteira;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.CarteiraDao;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.Saldo;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CarteiraActivity extends AppCompatActivity {
-
     private CarteiraDao carteiraDao;
     private CarteiraAdpter carteiraAdpter;
     private ListView listaCarteiras;
     private Context context;
-    private Retrofit rSaldo;
     private FloatingActionButton botaoAddCarteira;
 
     @Override
@@ -48,14 +39,14 @@ public class CarteiraActivity extends AppCompatActivity {
         listaCarteiras = (ListView) findViewById(R.id.listCarteirasId);
         context = this;
 
-        rSaldo = new Retrofit.Builder().baseUrl("http://moeda.ucl.br/balance/").addConverterFactory(GsonConverterFactory.create()).build();
+        //rSaldo = new Retrofit.Builder().baseUrl("http://moeda.ucl.br/balance/").addConverterFactory(GsonConverterFactory.create()).build();
 
         listaCarteiras.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Carteira carteira = (Carteira) carteiraAdpter.getItem(position);
 
-                saldoUC(carteira);
+                carteira.saldoUC(carteira,context);
             }
         });
 
@@ -73,8 +64,6 @@ public class CarteiraActivity extends AppCompatActivity {
         });
 
 
-
-
         // Botão de direciona para tela de cadastro de nova carteira
         botaoAddCarteira = findViewById(R.id.btAddCarteiraId);
 
@@ -87,37 +76,13 @@ public class CarteiraActivity extends AppCompatActivity {
         });
     }
 
-    private void saldoUC( Carteira carteira){
-
-        carteiraRequests service = rSaldo.create(carteiraRequests.class);
-
-        Call<Saldo> call = service.getSaldo(carteira.getChave_publica());
-
-        call.enqueue(new Callback<Saldo>() {
-            @Override
-            public void onResponse(Call<Saldo> call, Response<Saldo> response) {
-                if (response.isSuccessful()){
-                    Saldo saldo = response.body();
-
-                    Toast.makeText(CarteiraActivity.this, "Saldo: UC"+saldo.getBalance(), Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(CarteiraActivity.this, "Saldo da chave não encontrado", Toast.LENGTH_SHORT).show();
-                }
-            }
-            @Override
-            public void onFailure(Call<Saldo> call, Throwable t) {
-                Toast.makeText(CarteiraActivity.this, "Erro ao buscar saldo", Toast.LENGTH_SHORT).show();
-            }
-        });
-    };
-
     private void atualizarListaCarteira (){
         List<Carteira> carteiraLista = carteiraDao.recuperarCarteira();
         carteiraAdpter = new CarteiraAdpter(context, carteiraLista);
         listaCarteiras.setAdapter(carteiraAdpter);
     };
 
-    public void confirmarExclusao (final long idExc){
+    private void confirmarExclusao (final long idExc){
         final long idCarteira = idExc;
 
         AlertDialog.Builder msgBox = new AlertDialog.Builder(this);

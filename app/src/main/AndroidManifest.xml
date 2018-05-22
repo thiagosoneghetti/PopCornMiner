@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="popcornminer.thiagosoneghetti.com.br.popcornminer">
-
     // Permissão para utilizar a internet
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -21,7 +20,8 @@
         </activity>
         <activity android:name=".NovaTransferenciaActivity" />
         <activity android:name=".AddCarteiraActivity" />
-        <activity android:name=".CarteiraActivity"></activity>
+        <activity android:name=".CarteiraActivity" />
+        <activity android:name=".TransferenciaActivity"></activity>
     </application>
 
 </manifest>

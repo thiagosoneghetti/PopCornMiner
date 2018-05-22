@@ -9,16 +9,14 @@
 
     <ListView
         android:id="@+id/listCarteirasId"
-        android:layout_width="365dp"
-        android:layout_height="451dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp" />
+        android:layout_width="match_parent"
+        android:layout_height="442dp"
+        android:layout_marginStart="8dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/btAddCarteiraId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="56dp"
+        android:layout_height="57dp"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="5dp"
         android:layout_marginEnd="16dp"

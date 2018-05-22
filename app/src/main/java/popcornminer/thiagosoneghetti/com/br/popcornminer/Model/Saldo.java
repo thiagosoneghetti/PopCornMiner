@@ -30,4 +30,5 @@ public class Saldo implements Serializable {
     public void setBalance(String balance) {
         this.balance = balance;
     }
+
 }
