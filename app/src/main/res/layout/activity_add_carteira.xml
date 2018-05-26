@@ -25,7 +25,7 @@
         android:layout_marginRight="2dp"
         android:layout_marginTop="5dp"
         android:ems="10"
-        android:hint="@string/digite_sua_chave_publica"
+        android:hint="@string/digite_a_descricao"
         android:inputType="textPersonName"
         android:textSize="18sp" />
 
@@ -67,7 +67,7 @@
         android:layout_marginRight="2dp"
         android:layout_marginTop="5dp"
         android:ems="10"
-        android:hint="@string/digite_a_descricao"
+        android:hint="@string/digite_sua_chave_publica"
         android:inputType="textPersonName"
         android:textSize="18sp" />
 

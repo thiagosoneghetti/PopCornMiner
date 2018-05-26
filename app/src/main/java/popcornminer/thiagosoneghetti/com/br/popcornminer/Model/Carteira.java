@@ -3,9 +3,9 @@ package popcornminer.thiagosoneghetti.com.br.popcornminer.Model;
 import android.content.Context;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.io.Serializable;
 
-import popcornminer.thiagosoneghetti.com.br.popcornminer.CarteiraActivity;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.Requests.CarteiraRequests;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -95,5 +95,36 @@ public class Carteira implements Serializable{
             }
         });
     };
+
+
+    public void transferenciaUC(Carteira carteira, String chave_publica_destino, Float valor, final Context context){
+        //Instância Retrofit
+        Retrofit rTransferencia = new Retrofit.Builder().baseUrl("https://moeda.ucl.br/transaction/").addConverterFactory(GsonConverterFactory.create()).build();
+
+        CarteiraRequests service = rTransferencia.create(CarteiraRequests.class);
+
+        Call<Transferencia> call = service.getTransferencia(carteira.getChave_privada(),chave_publica_destino, valor);
+
+        call.enqueue(new Callback<Transferencia>() {
+            @Override
+            public void onResponse(Call<Transferencia> call, Response<Transferencia> response) {
+                if (response.isSuccessful()){
+                    Transferencia transferencia = response.body();
+
+                    Toast.makeText(context, "Resposta: "+transferencia.getMensagem(), Toast.LENGTH_LONG).show();
+                }else{
+                    Transferencia transferencia = response.body();
+                    Toast.makeText(context, "Transação: "+transferencia.getMensagem(), Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Transferencia> call, Throwable t) {
+
+                Toast.makeText(context, "Erro ao fazer transferencia", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 }
