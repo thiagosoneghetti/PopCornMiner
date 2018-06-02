@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "413094377631",
+    "firebase_url": "https://popcornminer-uc.firebaseio.com",
+    "project_id": "popcornminer-uc",
+    "storage_bucket": "popcornminer-uc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413094377631:android:c96384eecde7a973",
+        "android_client_info": {
+          "package_name": "popcornminer.thiagosoneghetti.com.br.popcornminer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413094377631-ftofq6jo6ik2a09f1f6t9be7539urjkq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "popcornminer.thiagosoneghetti.com.br.popcornminer",
+            "certificate_hash": "c0604d2922dabd4320b3536204dd985f92eebae2"
+          }
+        },
+        {
+          "client_id": "413094377631-ftm9etsmg8meve95915ouc9rl49dtnqv.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "413094377631-ftm9etsmg8meve95915ouc9rl49dtnqv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDc9JVsYvJCJ6YcOBZIQNrh4FJpjyXNasI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413094377631-ftm9etsmg8meve95915ouc9rl49dtnqv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

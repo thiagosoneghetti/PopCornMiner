@@ -15,4 +15,28 @@
     <string name="descricao">Descrição</string>
     <string name="digite_a_descricao">Digite a descrição</string>
     <string name="adicionar">Adicionar</string>
+    <string name="title_activity_login">Login</string>
+
+    <!-- Strings related to login -->
+    <string name="email">E-mail</string>
+    <string name="senha">Senha</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Entrar</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."</string>
+
+    <!-- Facebook -->
+    <string name="facebook_application_id" translatable="false">1801531709890334</string>
+    <!-- ID do Aplicativo do Facebook, prefixado por 'fb'. Ativa as guias personalizadas do Chrome. -->
+    <string name="facebook_login_protocol_scheme" translatable="false">fb1801531709890334</string>
+
+
+    <string name="insira_seu_email">Insira seu e-mail</string>
+    <string name="insira_sua_senha">Insira sua senha</string>
+    <string name="cadastrar">Cadastrar</string>
+
 </resources>
