@@ -16,29 +16,41 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        -->
-        <activity android:name=".CadastrarLoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        <activity android:name=".LoginActivity"
+            android:label="PopCornMiner">
+                <intent-filter>
+                    <action android:name="android.intent.action.MAIN" />
+                    <category android:name="android.intent.category.LAUNCHER" />
+                </intent-filter>
         </activity>
 
-        <activity android:name=".NovaTransferenciaActivity" />
-        <activity android:name=".AddCarteiraActivity" />
-        <activity android:name=".CarteiraActivity" />
-        <activity android:name=".TransferenciaActivity" />
-        <activity android:name=".MainActivity"></activity>
-        <!--<activity android:name=".CadastrarLoginActivity"></activity>-->
+        <activity android:name=".CadastrarLoginActivity"
+            android:label="@string/title_activity_cadastrarlogin">
+        </activity>
+
+        <activity android:name=".MainActivity"
+            android:label="@string/title_activity_menu">
+        </activity>
+
+        <activity android:name=".CarteiraActivity"
+            android:label="@string/title_activity_carteira">
+        </activity>
+
+        <activity
+            android:name=".AddCarteiraActivity"
+            android:label="@string/title_activity_addcarteira">
+        </activity>
+
+        <activity android:name=".TransferenciaActivity"
+            android:label="@string/title_activity_transferencia">
+        </activity>
+
+        <activity android:name=".NovaTransferenciaActivity"
+            android:label="@string/title_activity_novatransferencia">
+        </activity>
+
     </application>
 
 </manifest>

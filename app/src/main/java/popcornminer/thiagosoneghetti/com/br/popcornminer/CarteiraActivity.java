@@ -5,13 +5,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
@@ -20,6 +25,7 @@ import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.Carteira;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.CarteiraDao;
 
 public class CarteiraActivity extends AppCompatActivity {
+    private FirebaseAuth firebaseAuth;
     private CarteiraDao carteiraDao;
     private CarteiraAdpter carteiraAdpter;
     private ListView listaCarteiras;
@@ -31,9 +37,12 @@ public class CarteiraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_carteira);
 
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setTitle("Minhas Carteiras");
+        firebaseAuth  = FirebaseAuth.getInstance();
+
+        ActionBar actionBar = getSupportActionBar();
+        //actionBar.setIcon(R.mipmap.ic_launcher_foreground);
+        actionBar.setDisplayShowHomeEnabled(true); // Oculta o título da barra de ação
+        actionBar.setDisplayHomeAsUpEnabled(true); // Botão voltar
 
         carteiraDao = new CarteiraDao(this);
         listaCarteiras = (ListView) findViewById(R.id.listCarteirasId);
@@ -119,8 +128,41 @@ public class CarteiraActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_carteira,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        finish();
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent btVoltar = new Intent(CarteiraActivity.this,MainActivity.class);
+                startActivity(btVoltar);
+                break;
+            case R.id.bt_mcart_home:
+                Intent irHome = new Intent(CarteiraActivity.this,MainActivity.class);
+                startActivity(irHome);
+                break;
+            /*case R.id.bt_mcart_carteira:
+                Intent irCarteira = new Intent(CarteiraActivity.this,CarteiraActivity.class);
+                startActivity(irCarteira);
+                break; */
+            case R.id.bt_mcart_transferencia:
+                Intent irTransferencia = new Intent(CarteiraActivity.this,TransferenciaActivity.class);
+                startActivity(irTransferencia);
+                break;
+            case R.id.bt_mcart_sair:
+                firebaseAuth.signOut();
+                Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
+                Intent irLogin = new Intent(CarteiraActivity.this,LoginActivity.class);
+                startActivity(irLogin);
+                break;
+            default:
+                super.onOptionsItemSelected(item);
+                break;
+        }
         return true;
     }
 }

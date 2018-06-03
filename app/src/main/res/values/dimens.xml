@@ -3,4 +3,9 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="form_espaçamento">10dp</dimen>
+    <dimen name="logo_width">380dp</dimen>
+    <dimen name="logo_heigth">200dp</dimen>
+    <dimen name="form_botao">230dp</dimen>
+    <dimen name="botao_letra_tamanho">16sp</dimen>
 </resources>

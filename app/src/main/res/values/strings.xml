@@ -3,11 +3,6 @@
     <string name="botao_saldo">Saldo</string>
     <string name="botao_carteira">Carteira</string>
     <string name="botao_transferencia">Transferência</string>
-    <string name="title_activity_saldo">SaldoActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-    <string name="title_activity_carteira">CarteiraActivity</string>
     <string name="chave_publica">Chave Pública</string>
     <string name="digite_sua_chave_publica">Digite sua chave pública</string>
     <string name="chave_privada">Chave Privada</string>
@@ -15,28 +10,37 @@
     <string name="descricao">Descrição</string>
     <string name="digite_a_descricao">Digite a descrição</string>
     <string name="adicionar">Adicionar</string>
-    <string name="title_activity_login">Login</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_login">Efetuar Login</string>
+    <string name="title_activity_cadastrarlogin">Efetuar Cadastro</string>
+    <string name="title_activity_menu">Menu</string>
+    <string name="title_activity_carteira">Minhas Carteiras</string>
+    <string name="title_activity_addcarteira">Adicionar Carteira</string>
+    <string name="title_activity_transferencia">Transferência</string>
+    <string name="title_activity_novatransferencia">Pagar ou Receber</string>
+    <string name="logo">logo</string>
 
-    <!-- Strings related to login -->
-    <string name="email">E-mail</string>
-    <string name="senha">Senha</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Entrar</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."</string>
+    <!-- Strings login -->
+    <string name="email">E-mail:</string>
+    <string name="senha">Senha:</string>
+    <string name="insira_seu_email">Insira seu e-mail</string>
+    <string name="insira_sua_senha">Insira sua senha</string>
+    <string name="cadastrar">Cadastrar</string>
+    <string name="entrar">Entrar</string>
+    <string name="confirmar_senha">Confirmar Senha:</string>
+    <string name="repita_sua_senha">Repita sua senha</string>
+
+    <!-- Strings menu ActionBar -->
+    <string name="menu_home">Home</string>
+    <string name="menu_carteira">Carteira</string>
+    <string name="menu_transferencia">Transferência</string>
+    <string name="menu_sair">Sair</string>
 
     <!-- Facebook -->
     <string name="facebook_application_id" translatable="false">1801531709890334</string>
     <!-- ID do Aplicativo do Facebook, prefixado por 'fb'. Ativa as guias personalizadas do Chrome. -->
     <string name="facebook_login_protocol_scheme" translatable="false">fb1801531709890334</string>
-
-
-    <string name="insira_seu_email">Insira seu e-mail</string>
-    <string name="insira_sua_senha">Insira sua senha</string>
-    <string name="cadastrar">Cadastrar</string>
 
 </resources>

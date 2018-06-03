@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/bt_mcart_home"
+        android:icon="@drawable/ic_home_white_24dp"
+        android:title="@string/menu_home"
+        app:showAsAction="ifRoom"
+        tools:ignore="MenuTitle" />
+
+    <!--<item android:id="@+id/bt_mcart_carteira"
+        android:title="@string/menu_carteira"
+        app:showAsAction="never" /> -->
+
+    <item android:id="@+id/bt_mcart_transferencia"
+        android:title="@string/menu_transferencia"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/bt_mcart_sair"
+        android:title="@string/menu_sair"
+        app:showAsAction="never" />
+</menu>

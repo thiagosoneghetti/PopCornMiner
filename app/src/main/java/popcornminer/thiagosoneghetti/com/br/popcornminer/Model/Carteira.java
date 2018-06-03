@@ -69,7 +69,6 @@ public class Carteira implements Serializable{
         this.descricao = descricao;
     }
 
-
     public void saldoUC(Carteira carteira, final Context context){
 
         Retrofit rSaldo = new Retrofit.Builder().baseUrl("http://moeda.ucl.br/balance/").addConverterFactory(GsonConverterFactory.create()).build();

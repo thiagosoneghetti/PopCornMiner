@@ -1,9 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="15dp"
+    android:orientation="vertical"
     tools:context=".LoginActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:id="@+id/logoLogin"
+        android:layout_width="@dimen/logo_width"
+        android:layout_height="@dimen/logo_heigth"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/ic_logo_popcorn" />
+
+    <TextView
+        android:id="@+id/textViewEmailLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/form_espaçamento"
+        android:ems="10"
+        android:text="@string/email"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/editEmailLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/insira_seu_email"
+        android:inputType="textEmailAddress" />
+
+    <TextView
+        android:id="@+id/textViewSenhaLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/form_espaçamento"
+        android:ems="10"
+        android:text="@string/senha"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/editSenhaLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/insira_sua_senha"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/btLogin"
+        android:layout_width="@dimen/form_botao"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/form_espaçamento"
+        android:gravity="center"
+        android:text="@string/entrar"
+        android:textSize="@dimen/botao_letra_tamanho" />
+
+    <Button
+        android:id="@+id/btActivityCadastrar"
+        android:layout_width="@dimen/form_botao"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/form_espaçamento"
+        android:gravity="center"
+        android:text="@string/cadastrar"
+        android:textSize="@dimen/botao_letra_tamanho" />
+</LinearLayout>
