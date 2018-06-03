@@ -1,4 +1,4 @@
-package popcornminer.thiagosoneghetti.com.br.popcornminer;
+package popcornminer.thiagosoneghetti.com.br.popcornminer.activity;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -13,29 +13,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.OkHttpClient;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Adapter.CarteiraAdpter;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.Carteira;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.CarteiraDao;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.Transferencia;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Requests.CarteiraRequests;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.POST;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
 
 public class NovaTransferenciaActivity extends AppCompatActivity {
-    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth autenticacao;
     private Carteira carteira;
     private Button botaoTransferir;
     private TextView editDescricaoCarteira;
@@ -47,8 +35,6 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nova_transferencia);
-
-        firebaseAuth  = FirebaseAuth.getInstance();
 
         ActionBar actionBar = getSupportActionBar();
         //actionBar.setIcon(R.mipmap.ic_launcher_foreground);
@@ -149,7 +135,8 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
                 startActivity(irTransferencia);
                 break;*/
             case R.id.bt_mtransf_sair:
-                firebaseAuth.signOut();
+                autenticacao  = ConfiguracaoFirebase.getFirebaseAutenticacao();
+                autenticacao.signOut();
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
                 Intent irLogin = new Intent(NovaTransferenciaActivity.this,LoginActivity.class);
                 startActivity(irLogin);

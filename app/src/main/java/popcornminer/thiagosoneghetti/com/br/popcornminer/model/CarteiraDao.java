@@ -1,18 +1,16 @@
-package popcornminer.thiagosoneghetti.com.br.popcornminer.Model;
+package popcornminer.thiagosoneghetti.com.br.popcornminer.model;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.widget.Adapter;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Adapter.CarteiraAdpter;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Adapter.TransferenciaAdpter;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Banco.CarteiraOpenHelper;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.adapter.CarteiraAdpter;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.adapter.TransferenciaAdpter;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.CarteiraOpenHelper;
 
 public class CarteiraDao {
     private CarteiraOpenHelper dbHelper;

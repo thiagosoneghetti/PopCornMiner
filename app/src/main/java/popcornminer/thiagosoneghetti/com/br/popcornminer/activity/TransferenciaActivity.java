@@ -1,4 +1,4 @@
-package popcornminer.thiagosoneghetti.com.br.popcornminer;
+package popcornminer.thiagosoneghetti.com.br.popcornminer.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,13 +17,15 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Adapter.TransferenciaAdpter;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.Carteira;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.CarteiraDao;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.adapter.TransferenciaAdpter;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.model.CarteiraDao;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
 
 
 public class TransferenciaActivity extends AppCompatActivity {
-    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth autenticacao;
     private CarteiraDao carteiraDao;
     private TransferenciaAdpter transferenciaAdpter;
     private ListView listaCarteiras;
@@ -33,8 +35,6 @@ public class TransferenciaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transferencia);
-
-        firebaseAuth  = FirebaseAuth.getInstance();
 
         ActionBar actionBar = getSupportActionBar();
         //actionBar.setIcon(R.mipmap.ic_launcher_foreground);
@@ -104,7 +104,8 @@ public class TransferenciaActivity extends AppCompatActivity {
                 startActivity(irTransferencia);
                 break;*/
             case R.id.bt_mtransf_sair:
-                firebaseAuth.signOut();
+                autenticacao  = ConfiguracaoFirebase.getFirebaseAutenticacao();
+                autenticacao.signOut();
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
                 Intent irLogin = new Intent(TransferenciaActivity.this,LoginActivity.class);
                 startActivity(irLogin);

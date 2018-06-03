@@ -1,12 +1,11 @@
-package popcornminer.thiagosoneghetti.com.br.popcornminer.Model;
+package popcornminer.thiagosoneghetti.com.br.popcornminer.model;
 
 import android.content.Context;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.io.Serializable;
 
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Requests.CarteiraRequests;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.requests.CarteiraRequests;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

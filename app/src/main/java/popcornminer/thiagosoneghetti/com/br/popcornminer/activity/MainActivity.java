@@ -1,4 +1,4 @@
-package popcornminer.thiagosoneghetti.com.br.popcornminer;
+package popcornminer.thiagosoneghetti.com.br.popcornminer.activity;
 
 
 import android.content.Intent;
@@ -14,9 +14,12 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
+
 public class MainActivity extends AppCompatActivity {
 
-    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth autenticacao;
     private Button botaoCarteira;
     private Button botaoTransferencia;
 
@@ -24,8 +27,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        firebaseAuth  = FirebaseAuth.getInstance();
 
         ActionBar actionBar = getSupportActionBar();
 //        ActionBar actionBar = getActionBar();
@@ -82,7 +83,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(irTransferencia);
                 break;*/
             case R.id.bt_mhome_sair:
-                firebaseAuth.signOut();
+                autenticacao  = ConfiguracaoFirebase.getFirebaseAutenticacao();
+                autenticacao.signOut();
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
                 Intent irLogin = new Intent(MainActivity.this,LoginActivity.class);
                 startActivity(irLogin);

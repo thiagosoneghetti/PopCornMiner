@@ -1,6 +1,4 @@
-package popcornminer.thiagosoneghetti.com.br.popcornminer.Model;
-
-import android.content.Context;
+package popcornminer.thiagosoneghetti.com.br.popcornminer.model;
 
 import java.io.Serializable;
 

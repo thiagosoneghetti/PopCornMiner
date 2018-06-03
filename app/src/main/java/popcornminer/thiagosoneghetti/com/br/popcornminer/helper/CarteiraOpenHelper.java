@@ -1,4 +1,4 @@
-package popcornminer.thiagosoneghetti.com.br.popcornminer.Banco;
+package popcornminer.thiagosoneghetti.com.br.popcornminer.helper;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

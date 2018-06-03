@@ -1,4 +1,4 @@
-package popcornminer.thiagosoneghetti.com.br.popcornminer;
+package popcornminer.thiagosoneghetti.com.br.popcornminer.activity;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -20,12 +20,14 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Adapter.CarteiraAdpter;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.Carteira;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.CarteiraDao;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.adapter.CarteiraAdpter;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.model.CarteiraDao;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
 
 public class CarteiraActivity extends AppCompatActivity {
-    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth autenticacao;
     private CarteiraDao carteiraDao;
     private CarteiraAdpter carteiraAdpter;
     private ListView listaCarteiras;
@@ -36,8 +38,6 @@ public class CarteiraActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_carteira);
-
-        firebaseAuth  = FirebaseAuth.getInstance();
 
         ActionBar actionBar = getSupportActionBar();
         //actionBar.setIcon(R.mipmap.ic_launcher_foreground);
@@ -178,7 +178,8 @@ public class CarteiraActivity extends AppCompatActivity {
                 startActivity(irTransferencia);
                 break;
             case R.id.bt_mcart_sair:
-                firebaseAuth.signOut();
+                autenticacao  = ConfiguracaoFirebase.getFirebaseAutenticacao();
+                autenticacao.signOut();
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
                 Intent irLogin = new Intent(CarteiraActivity.this,LoginActivity.class);
                 startActivity(irLogin);

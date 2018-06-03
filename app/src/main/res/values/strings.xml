@@ -31,6 +31,8 @@
     <string name="entrar">Entrar</string>
     <string name="confirmar_senha">Confirmar Senha:</string>
     <string name="repita_sua_senha">Repita sua senha</string>
+    <string name="nome">Nome:</string>
+    <string name="insira_seu_nome">Insira seu nome</string>
 
     <!-- Strings menu ActionBar -->
     <string name="menu_home">Home</string>
@@ -42,5 +44,7 @@
     <string name="facebook_application_id" translatable="false">1801531709890334</string>
     <!-- ID do Aplicativo do Facebook, prefixado por 'fb'. Ativa as guias personalizadas do Chrome. -->
     <string name="facebook_login_protocol_scheme" translatable="false">fb1801531709890334</string>
+    <string name="nao_tem_conta_cadastre">Não tem conta? Cadastre-se</string>
+
 
 </resources>

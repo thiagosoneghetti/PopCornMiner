@@ -1,4 +1,4 @@
-package popcornminer.thiagosoneghetti.com.br.popcornminer;
+package popcornminer.thiagosoneghetti.com.br.popcornminer.activity;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
@@ -13,12 +13,16 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.Carteira;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.CarteiraDao;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.model.CarteiraDao;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
 
 public class AddCarteiraActivity extends AppCompatActivity {
-    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth autenticacao;
+    private DatabaseReference referenciaFirebase;
     private EditText eChavePublica;
     private EditText eChavePrivada;
     private EditText eDescricao;
@@ -30,7 +34,8 @@ public class AddCarteiraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_carteira);
 
-        firebaseAuth  = FirebaseAuth.getInstance();
+        //referenciaFirebase = ConfiguracaoFirebase.getFirebase();
+        //referenciaFirebase.child("pontos").setValue("800");
 
         ActionBar actionBar = getSupportActionBar();
         //actionBar.setIcon(R.mipmap.ic_launcher_foreground);
@@ -109,7 +114,8 @@ public class AddCarteiraActivity extends AppCompatActivity {
                 startActivity(irTransferencia);
                 break;
             case R.id.bt_mcart_sair:
-                firebaseAuth.signOut();
+                autenticacao  = ConfiguracaoFirebase.getFirebaseAutenticacao();
+                autenticacao.signOut();
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
                 Intent irLogin = new Intent(AddCarteiraActivity.this,LoginActivity.class);
                 startActivity(irLogin);

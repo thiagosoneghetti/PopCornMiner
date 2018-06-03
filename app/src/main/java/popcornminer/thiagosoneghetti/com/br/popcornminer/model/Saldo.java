@@ -1,4 +1,4 @@
-package popcornminer.thiagosoneghetti.com.br.popcornminer.Model;
+package popcornminer.thiagosoneghetti.com.br.popcornminer.model;
 
 import java.io.Serializable;
 

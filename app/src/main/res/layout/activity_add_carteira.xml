@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="15dp"
+    android:gravity="center_vertical|center_horizontal"
     android:orientation="vertical"
-    tools:context=".AddCarteiraActivity">
+    tools:context=".activity.AddCarteiraActivity">
 
     <TextView
         android:id="@+id/textView"

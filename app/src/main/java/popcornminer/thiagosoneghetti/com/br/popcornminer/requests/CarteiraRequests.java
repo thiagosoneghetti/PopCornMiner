@@ -1,10 +1,8 @@
-package popcornminer.thiagosoneghetti.com.br.popcornminer.Requests;
+package popcornminer.thiagosoneghetti.com.br.popcornminer.requests;
 
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.Saldo;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.Model.Transferencia;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Saldo;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Transferencia;
 import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;

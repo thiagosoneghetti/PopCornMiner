@@ -4,17 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="15dp"
+    android:layout_margin="10dp"
+    android:gravity="center_vertical|center_horizontal"
     android:orientation="vertical"
-    tools:context=".CadastrarLoginActivity">
+    tools:context=".activity.CadastrarLoginActivity">
 
     <ImageView
         android:id="@+id/logoCadastroLogin"
-        android:layout_width="@dimen/logo_width"
-        android:layout_height="@dimen/logo_heigth"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ic_cadastro_usuario_heigth"
         android:layout_gravity="center"
         android:contentDescription="@string/logo"
-        app:srcCompat="@drawable/ic_logo_popcorn" />
+        app:srcCompat="@drawable/ic_cadastro_usuario" />
+
+    <TextView
+        android:id="@+id/textViewNome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/nome"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/editNome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/insira_seu_nome"
+        android:inputType="textPersonName" />
 
     <TextView
         android:id="@+id/textViewEmail"
@@ -31,21 +49,20 @@
         android:id="@+id/editEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="3dp"
         android:ems="10"
         android:hint="@string/insira_seu_email"
         android:inputType="textEmailAddress" />
 
     <TextView
-    android:id="@+id/textViewSenha"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="3dp"
-    android:ems="10"
-    android:text="@string/senha"
-    android:textColor="@android:color/black"
-    android:textSize="18sp"
-    android:textStyle="bold" />
+        android:id="@+id/textViewSenha"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:ems="10"
+        android:text="@string/senha"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/editSenha"

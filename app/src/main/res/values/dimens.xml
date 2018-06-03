@@ -6,6 +6,8 @@
     <dimen name="form_espaçamento">10dp</dimen>
     <dimen name="logo_width">380dp</dimen>
     <dimen name="logo_heigth">200dp</dimen>
+    <dimen name="ic_cadastro_usuario_width">300</dimen>
+    <dimen name="ic_cadastro_usuario_heigth">150dp</dimen>
     <dimen name="form_botao">230dp</dimen>
     <dimen name="botao_letra_tamanho">16sp</dimen>
 </resources>
