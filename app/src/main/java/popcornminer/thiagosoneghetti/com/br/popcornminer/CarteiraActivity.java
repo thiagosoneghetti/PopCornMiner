@@ -67,7 +67,7 @@ public class CarteiraActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Carteira carteira = (Carteira) carteiraAdpter.getItem(position);
 
-                confirmarExclusao(carteira.getId());
+                confirmarExclusao(carteira.getId(),carteira.getDescricao());
                 return true;
             }
         });
@@ -91,21 +91,45 @@ public class CarteiraActivity extends AppCompatActivity {
         listaCarteiras.setAdapter(carteiraAdpter);
     };
 
-    private void confirmarExclusao (final long idExc){
+    private void confirmarExclusao (final long idExc, final String descricao){
         final long idCarteira = idExc;
 
+
         AlertDialog.Builder msgBox = new AlertDialog.Builder(this);
-        msgBox.setTitle("Excluindo...");
+        msgBox.setTitle("Remover carteira:");
         msgBox.setIcon(android.R.drawable.ic_menu_delete);
-        msgBox.setMessage("Tem certeza que deseja excluir a carteira selecionada?");
+        msgBox.setMessage("Deseja excluir a carteira \""+ descricao +"\"?");
         msgBox.setNegativeButton("Não", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(context, "Exclusão cancelada", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Exclusão cancelada!", Toast.LENGTH_SHORT).show();
             }
         });
 
         msgBox.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Exclusao(idExc, descricao);
+            }
+        });
+        msgBox.show();
+    }
+
+    private void Exclusao (final long idExc, String descricao){
+        final long idCarteira = idExc;
+
+        AlertDialog.Builder msgBox = new AlertDialog.Builder(this);
+        msgBox.setTitle("Confirmação de exclusão:");
+        msgBox.setIcon(android.R.drawable.ic_menu_delete);
+        msgBox.setMessage("AVISO: A carteira \""+ descricao +"\" será deletada permanentemente.");
+        msgBox.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(context, "Exclusão cancelada!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        msgBox.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(context, "Carteira deletada com sucesso!", Toast.LENGTH_SHORT).show();

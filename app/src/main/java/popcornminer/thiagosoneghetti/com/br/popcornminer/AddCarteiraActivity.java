@@ -46,7 +46,24 @@ public class AddCarteiraActivity extends AppCompatActivity {
         btSalvarCarteira.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                salvar();
+                // Confirmando se os campos estão vazios antes de salvar
+                if (eChavePublica.getText().toString().equals("") && eChavePrivada.getText().toString().equals("") && eDescricao.getText().toString().equals("")) {
+                    Toast.makeText(AddCarteiraActivity.this, "Preencha todos os campos.", Toast.LENGTH_SHORT).show();
+                }else if(eDescricao.getText().toString().equals("")){
+                    Toast.makeText(AddCarteiraActivity.this, "Insira uma descrição.", Toast.LENGTH_SHORT).show();
+                }else if(eChavePrivada.getText().toString().equals("")){
+                    Toast.makeText(AddCarteiraActivity.this, "Insira uma chave privada.", Toast.LENGTH_SHORT).show();
+                }else if(eChavePublica.getText().toString().equals("")){
+                    Toast.makeText(AddCarteiraActivity.this, "Insira uma chave pública.", Toast.LENGTH_SHORT).show();
+                }else{
+                    if(eChavePrivada.getText().toString().length() != 64 ) {
+                        Toast.makeText(AddCarteiraActivity.this, "Insira uma chave privada válida.", Toast.LENGTH_SHORT).show();
+                    }else if(eChavePublica.getText().toString().length() != 66 ) {
+                        Toast.makeText(AddCarteiraActivity.this, "Insira uma chave pública válida.", Toast.LENGTH_SHORT).show();
+                    }else{
+                        salvar();
+                    }
+                }
             }
         });
 
@@ -60,7 +77,7 @@ public class AddCarteiraActivity extends AppCompatActivity {
         );
 
         carteiraDao.inserir(carteira);
-        Toast.makeText(AddCarteiraActivity.this, "Adicionado com sucesso", Toast.LENGTH_SHORT).show();
+        Toast.makeText(AddCarteiraActivity.this, "Carteira\"" +eDescricao.getText().toString()+ "\" adicionada.", Toast.LENGTH_SHORT).show();
 
         finish();
      };

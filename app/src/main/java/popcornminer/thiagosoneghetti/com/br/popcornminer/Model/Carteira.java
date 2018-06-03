@@ -85,12 +85,12 @@ public class Carteira implements Serializable{
 
                     Toast.makeText(context, "Saldo: UC "+saldo.getBalance(), Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(context, "Saldo da chave não encontrado", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Saldo: Chave Pública Inválida.", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
             public void onFailure(Call<Saldo> call, Throwable t) {
-                Toast.makeText(context, "Erro ao buscar saldo", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Não foi possível conectar ao servidor.", Toast.LENGTH_SHORT).show();
             }
         });
     };
@@ -109,19 +109,16 @@ public class Carteira implements Serializable{
             public void onResponse(Call<Transferencia> call, Response<Transferencia> response) {
                 if (response.isSuccessful()){
                     Transferencia transferencia = response.body();
-
-                    Toast.makeText(context, "Resposta: "+transferencia.getMensagem(), Toast.LENGTH_LONG).show();
-                }else{
+                        Toast.makeText(context, "Transação: " + transferencia.getMensagem(), Toast.LENGTH_SHORT).show();
+                }else {
                     Transferencia transferencia = response.body();
-                    Toast.makeText(context, "Transação: "+transferencia.getMensagem(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Transação: Não Realizada.", Toast.LENGTH_LONG).show();
                 }
-
             }
 
             @Override
             public void onFailure(Call<Transferencia> call, Throwable t) {
-
-                Toast.makeText(context, "Erro ao fazer transferencia", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Não foi possível conectar ao servidor.", Toast.LENGTH_SHORT).show();
             }
         });
     }
