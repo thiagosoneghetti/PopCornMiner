@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import java.io.Serializable;
 
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.requests.CarteiraRequests;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -79,12 +80,31 @@ public class Carteira implements Serializable{
         call.enqueue(new Callback<Saldo>() {
             @Override
             public void onResponse(Call<Saldo> call, Response<Saldo> response) {
-                if (response.isSuccessful()){
-                    Saldo saldo = response.body();
 
-                    Toast.makeText(context, "Saldo: UC "+saldo.getBalance(), Toast.LENGTH_SHORT).show();
+                if (response.isSuccessful()) {
+                    Saldo saldo = response.body();
+                    Toast.makeText(context, "Saldo: UC " + saldo.getBalance(), Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(context, "Saldo: Chave Pública Inválida.", Toast.LENGTH_SHORT).show();
+                    String resposta;
+                    switch (response.code()){
+
+                        case 404:
+                            resposta = "Erro na solicitação.";
+                            break;
+                        case 400:
+                            resposta = "Solicitação inválida, verifique os dados inseridos..";
+                            break;
+                        case 500:
+                            resposta = "Erro interno do servidor.";
+                            break;
+                        case 503:
+                            resposta = "Serviço indisponível.";
+                            break;
+                        default:
+                            resposta = "Erro desconhecido." ;
+                            break;
+                    }
+                    Toast.makeText(context, ""+resposta, Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
@@ -110,8 +130,25 @@ public class Carteira implements Serializable{
                     Transferencia transferencia = response.body();
                         Toast.makeText(context, "Transação: " + transferencia.getMensagem(), Toast.LENGTH_SHORT).show();
                 }else {
-                    Transferencia transferencia = response.body();
-                        Toast.makeText(context, "Transação: Não Realizada.", Toast.LENGTH_LONG).show();
+                    String resposta;
+                    switch (response.code()){
+                        case 404:
+                            resposta = "Erro na solicitação.";
+                            break;
+                        case 400:
+                            resposta = "Solicitação inválida, verifique os dados inseridos.";
+                            break;
+                        case 500:
+                            resposta = "Erro interno do servidor.";
+                            break;
+                        case 503:
+                            resposta = "Serviço indisponível.";
+                            break;
+                        default:
+                            resposta = "Erro desconhecido." ;
+                            break;
+                    }
+                        Toast.makeText(context, "Transação não realizada: "+resposta, Toast.LENGTH_LONG).show();
                 }
             }
 

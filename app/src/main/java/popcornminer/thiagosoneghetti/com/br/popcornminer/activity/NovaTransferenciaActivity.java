@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
 
@@ -41,6 +42,7 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
         actionBar.setDisplayShowHomeEnabled(true); // Oculta o título da barra de ação
         actionBar.setDisplayHomeAsUpEnabled(true); // Botão voltar
 
+        context = this;
         botaoTransferir = findViewById(R.id.btTransferirId);
         editCPublicaDest = findViewById(R.id.editCPublicaDestinoId);
         editValorTranf = findViewById(R.id.editValorTransfId);
@@ -49,7 +51,7 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
 
 
         // Recuperando os dados que foram passados na Activity anterior
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         if(intent.getSerializableExtra("carteira") != null) {
             carteira = (Carteira) intent.getSerializableExtra("carteira");
 
@@ -59,21 +61,31 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
         botaoTransferir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // verificando se os campos estão preenchidos
-                if (editCPublicaDest.getText().toString().equals("") && editValorTranf.getText().toString().equals("") ) {
-                    Toast.makeText(NovaTransferenciaActivity.this, "Preencha todos os campos.", Toast.LENGTH_SHORT).show();
-                }else if(editCPublicaDest.getText().toString().equals("")) {
-                    Toast.makeText(NovaTransferenciaActivity.this, "Insira a chave pública de destino.", Toast.LENGTH_SHORT).show();
-                }else if(editValorTranf.getText().toString().equals("")) {
-                    Toast.makeText(NovaTransferenciaActivity.this, "Insira um valor.", Toast.LENGTH_SHORT).show();
-                }else if(editCPublicaDest.getText().toString().length() != 66){
-                    Toast.makeText(NovaTransferenciaActivity.this, "Insira uma chave pública válida.", Toast.LENGTH_SHORT).show();
-                }else {
-                    // Carpturando os dados necessários para transação
-                    String chave_publica_destino = editCPublicaDest.getText().toString();
-                    Float valor = Float.parseFloat(editValorTranf.getText().toString());
+                // Verificando se possui conexão com a internet
+                Boolean conexaoInternet = ConexaoInternet.verificaConexao(context);
+                if (conexaoInternet == true) {
+                    // Verifica se algum dos campos está vazio, se não pula para verificação do tamanho da chave pública
+                    if (editCPublicaDest.getText().toString().equals("") || editValorTranf.getText().toString().equals("")) {
+                        // Verifica quais campos estão vazios
+                        if (editCPublicaDest.getText().toString().equals("") && editValorTranf.getText().toString().equals("")) {
+                            Toast.makeText(context, "Preencha todos os campos.", Toast.LENGTH_SHORT).show();
+                        } else if (editCPublicaDest.getText().toString().equals("")) {
+                            Toast.makeText(context, "Insira a chave pública de destino.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "Insira um valor.", Toast.LENGTH_SHORT).show();
+                        }
+                        // Valida se a chave pública inserida possui 66 caracteres
+                    } else if (editCPublicaDest.getText().toString().length() != 66) {
+                        Toast.makeText(context, "Insira uma chave pública válida.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Capturando os dados necessários para transação
+                        String chave_publica_destino = editCPublicaDest.getText().toString();
+                        Float valor = Float.parseFloat(editValorTranf.getText().toString());
 
-                    confirmarTransferencia(carteira, chave_publica_destino, valor);
+                        confirmarTransferencia(carteira, chave_publica_destino, valor);
+                    }
+                } else {
+                    Toast.makeText(context, "Sem conexão com a internet.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -89,6 +101,7 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
         msgBox.setTitle("Confirmação de Transação:");
         msgBox.setIcon(android.R.drawable.ic_menu_send);
         msgBox.setMessage("Transferir UC "+ valorDestino +" para \""+ chavePublicaDestino +"\"?");
+        msgBox.setCancelable(false); // Não deixar clicar fora da caixa para sair
         msgBox.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -99,10 +112,10 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
         msgBox.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                carteiraDestino.transferenciaUC(carteiraDestino, chavePublicaDestino, valorDestino, NovaTransferenciaActivity.this);
+            carteiraDestino.transferenciaUC(carteiraDestino, chavePublicaDestino, valorDestino, NovaTransferenciaActivity.this);
 
-                Intent intent = new Intent(NovaTransferenciaActivity.this,TransferenciaActivity.class);
-                startActivity(intent);
+            Intent intent = new Intent(NovaTransferenciaActivity.this,TransferenciaActivity.class);
+            startActivity(intent);
             }
         });
         msgBox.show();

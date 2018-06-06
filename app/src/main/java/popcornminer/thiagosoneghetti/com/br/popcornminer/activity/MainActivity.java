@@ -13,13 +13,17 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Base64Custom;
 
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth autenticacao;
+    private DatabaseReference firebase;
     private Button botaoCarteira;
     private Button botaoTransferencia;
 
@@ -27,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mensagemBemVindo();
 
         ActionBar actionBar = getSupportActionBar();
 //        ActionBar actionBar = getActionBar();
@@ -94,5 +100,19 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return true;
+    }
+
+    public void mensagemBemVindo(){
+        autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
+        FirebaseUser usuarioFirebase = autenticacao.getCurrentUser();
+        // Buscando e-mail do usuário no Firebase
+        String email = usuarioFirebase.getEmail();
+
+        /*String identificador = Base64Custom.codificarBase64(autenticacao.getCurrentUser().getEmail());
+        firebase = ConfiguracaoFirebase.getFirebase().child("usuario").child(identificador);
+        String nome = new (firebase.child("nome"));
+        */
+        Toast.makeText(MainActivity.this, "Seja Bem-Vindo! Logado com "+ email +"!", Toast.LENGTH_LONG).show();
+
     }
 }

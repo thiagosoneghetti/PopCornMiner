@@ -17,17 +17,24 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.adapter.CarteiraAdpter;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Base64Custom;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.model.CarteiraDao;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
 
 public class CarteiraActivity extends AppCompatActivity {
-    private FirebaseAuth autenticacao;
+    private FirebaseAuth usuarioFirebase;
+    private DatabaseReference referenciaDatabase;
     private CarteiraDao carteiraDao;
     private CarteiraAdpter carteiraAdpter;
     private ListView listaCarteiras;
@@ -39,13 +46,16 @@ public class CarteiraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_carteira);
 
+        usuarioFirebase = ConfiguracaoFirebase.getFirebaseAutenticacao();
+        referenciaDatabase = ConfiguracaoFirebase.getFirebase();
+
         ActionBar actionBar = getSupportActionBar();
         //actionBar.setIcon(R.mipmap.ic_launcher_foreground);
         actionBar.setDisplayShowHomeEnabled(true); // Oculta o título da barra de ação
         actionBar.setDisplayHomeAsUpEnabled(true); // Botão voltar
 
         carteiraDao = new CarteiraDao(this);
-        listaCarteiras = (ListView) findViewById(R.id.listCarteirasId);
+        listaCarteiras = findViewById(R.id.listCarteirasId);
         context = this;
 
         //rSaldo = new Retrofit.Builder().baseUrl("http://moeda.ucl.br/balance/").addConverterFactory(GsonConverterFactory.create()).build();
@@ -53,9 +63,14 @@ public class CarteiraActivity extends AppCompatActivity {
         listaCarteiras.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Carteira carteira = (Carteira) carteiraAdpter.getItem(position);
+                Boolean conexaoInternet = ConexaoInternet.verificaConexao(context);
+                if ( conexaoInternet == true) {
+                    Carteira carteira = (Carteira) carteiraAdpter.getItem(position);
 
-                carteira.saldoUC(carteira,context);
+                    carteira.saldoUC(carteira, context);
+                } else {
+                    Toast.makeText(context, "Sem conexão com a internet.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -99,6 +114,7 @@ public class CarteiraActivity extends AppCompatActivity {
         msgBox.setTitle("Remover carteira:");
         msgBox.setIcon(android.R.drawable.ic_menu_delete);
         msgBox.setMessage("Deseja excluir a carteira \""+ descricao +"\"?");
+        msgBox.setCancelable(false); // Não deixar clicar fora da caixa para sair
         msgBox.setNegativeButton("Não", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -122,6 +138,7 @@ public class CarteiraActivity extends AppCompatActivity {
         msgBox.setTitle("Confirmação de exclusão:");
         msgBox.setIcon(android.R.drawable.ic_menu_delete);
         msgBox.setMessage("AVISO: A carteira \""+ descricao +"\" será deletada permanentemente.");
+        msgBox.setCancelable(false); // Não deixar clicar fora da caixa para sair
         msgBox.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -178,8 +195,8 @@ public class CarteiraActivity extends AppCompatActivity {
                 startActivity(irTransferencia);
                 break;
             case R.id.bt_mcart_sair:
-                autenticacao  = ConfiguracaoFirebase.getFirebaseAutenticacao();
-                autenticacao.signOut();
+                usuarioFirebase  = ConfiguracaoFirebase.getFirebaseAutenticacao();
+                usuarioFirebase.signOut();
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
                 Intent irLogin = new Intent(CarteiraActivity.this,LoginActivity.class);
                 startActivity(irLogin);

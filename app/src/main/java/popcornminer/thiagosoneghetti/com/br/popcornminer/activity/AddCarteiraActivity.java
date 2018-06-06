@@ -1,5 +1,6 @@
 package popcornminer.thiagosoneghetti.com.br.popcornminer.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -13,21 +14,27 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Base64Custom;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Preferencias;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.model.CarteiraDao;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
 
 public class AddCarteiraActivity extends AppCompatActivity {
-    private FirebaseAuth autenticacao;
+    private FirebaseAuth usuarioFirebase;
     private DatabaseReference referenciaFirebase;
     private EditText eChavePublica;
     private EditText eChavePrivada;
     private EditText eDescricao;
     private Button btSalvarCarteira;
     private CarteiraDao carteiraDao;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +82,7 @@ public class AddCarteiraActivity extends AppCompatActivity {
     }
 
     public void salvar(){
+
         Carteira carteira = new Carteira(
                 eChavePublica.getText().toString(),
                 eChavePrivada.getText().toString(),
@@ -85,6 +93,49 @@ public class AddCarteiraActivity extends AppCompatActivity {
         Toast.makeText(AddCarteiraActivity.this, "Carteira\"" +eDescricao.getText().toString()+ "\" adicionada.", Toast.LENGTH_SHORT).show();
 
         finish();
+     }
+
+     public void salvarFB(){
+
+        //Recuperar o usuário pelo ID Base 64
+         Preferencias preferencias = new Preferencias(context);
+         String indentificador = preferencias.getIdentificador();
+
+         //Recuperar instância Firebase
+         referenciaFirebase = ConfiguracaoFirebase.getFirebase().child("usuario").child(indentificador);
+         Toast.makeText(context, ""+indentificador, Toast.LENGTH_SHORT).show();
+
+        /*
+        Era da parte 213 e 214 - verificando se havia e-mail cadastrado
+        referenciaFirebase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if ( dataSnapshot != null){
+
+                }else{
+                    // Caso não tenha nenhuma carteira criada
+                    Toast.makeText(contexto, "Usuário não possui nenhuma carteira cadastrada!", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
+        /*
+        Carteira carteira = new Carteira(
+                eChavePublica.getText().toString(),
+                eChavePrivada.getText().toString(),
+                eDescricao.getText().toString()
+        );
+
+        carteiraDao.inserir(carteira);
+        Toast.makeText(AddCarteiraActivity.this, "Carteira\"" +eDescricao.getText().toString()+ "\" adicionada.", Toast.LENGTH_SHORT).show();
+
+        finish(); */
+
      };
 
     @Override
@@ -114,8 +165,8 @@ public class AddCarteiraActivity extends AppCompatActivity {
                 startActivity(irTransferencia);
                 break;
             case R.id.bt_mcart_sair:
-                autenticacao  = ConfiguracaoFirebase.getFirebaseAutenticacao();
-                autenticacao.signOut();
+                usuarioFirebase  = ConfiguracaoFirebase.getFirebaseAutenticacao();
+                usuarioFirebase.signOut();
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
                 Intent irLogin = new Intent(AddCarteiraActivity.this,LoginActivity.class);
                 startActivity(irLogin);

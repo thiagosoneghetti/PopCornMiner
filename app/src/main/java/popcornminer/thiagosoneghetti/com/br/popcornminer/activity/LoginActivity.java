@@ -1,9 +1,11 @@
 package popcornminer.thiagosoneghetti.com.br.popcornminer.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +23,9 @@ import com.google.firebase.auth.FirebaseUser;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Base64Custom;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Preferencias;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Usuario;
 
 public class LoginActivity extends AppCompatActivity {
@@ -31,14 +36,16 @@ public class LoginActivity extends AppCompatActivity {
     private EditText email;
     private EditText senha;
     private Usuario usuario;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
+        verificarSeUsuarioLogado();
 
+        context = this;
         botaoLogin = findViewById(R.id.btLogin);
         botaoActivityCadastrar = findViewById(R.id.btActivityCadastrar);
         email = findViewById(R.id.editEmailLogin);
@@ -55,29 +62,45 @@ public class LoginActivity extends AppCompatActivity {
         botaoLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Verificando se possui conexão com a internet
+                Boolean conexaoInternet = ConexaoInternet.verificaConexao(context);
+                if ( conexaoInternet == true ) {
+                    usuario = new Usuario();
+                    usuario.setEmail(email.getText().toString());
+                    usuario.setSenha(senha.getText().toString());
 
-                usuario = new Usuario();
-                usuario.setEmail( email.getText().toString() );
-                usuario.setSenha( senha.getText().toString() );
-
-                if (usuario.getEmail().equals("") || usuario.getSenha().equals("")){
-                    // Verificando se os campos estão vazios, caso estejam apresenta uma mensagem informando.
-                    if (usuario.getEmail().equals("") && usuario.getSenha().equals("")){
-                        Toast.makeText(LoginActivity.this, "Digite seu e-mail e sua senha!", Toast.LENGTH_SHORT).show();
-                    }else if (usuario.getEmail().equals("")){
-                        Toast.makeText(LoginActivity.this, "Digite seu e-mail!", Toast.LENGTH_SHORT).show();
-                    }else{
-                        Toast.makeText(LoginActivity.this, "Digite sua senha!", Toast.LENGTH_SHORT).show();
+                    if (usuario.getEmail().equals("") || usuario.getSenha().equals("")) {
+                        // Verificando se os campos estão vazios, caso estejam apresenta uma mensagem informando.
+                        if (usuario.getEmail().equals("") && usuario.getSenha().equals("")) {
+                            Toast.makeText(LoginActivity.this, "Digite seu e-mail e sua senha!", Toast.LENGTH_SHORT).show();
+                        } else if (usuario.getEmail().equals("")) {
+                            Toast.makeText(LoginActivity.this, "Digite seu e-mail!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Digite sua senha!", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        validarLogin();
                     }
-                }else{
-                    validarLogin();
+                } else {
+                    Toast.makeText(context, "Sem conexão com a internet.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
+    private void verificarSeUsuarioLogado(){
+
+        autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
+        //Verificar se usuário está logado, caso sim, vai direto para tela principal
+        if ( autenticacao.getCurrentUser() != null){
+            abrirTelaPrincipal();
+            finish();
+        }
+    }
+
     private void validarLogin(){
 
+        autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
         // Fazer Login
         autenticacao.signInWithEmailAndPassword(usuario.getEmail(),usuario.getSenha())
         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
@@ -86,12 +109,23 @@ public class LoginActivity extends AppCompatActivity {
                 // verificando se usuário faz login
 
                 if (task.isSuccessful()){
-                    FirebaseUser usuarioFirebase = task.getResult().getUser();
-                    // Buscando e-mail do usuário no Firebase
-                    String email = usuarioFirebase.getEmail();
 
-                    abrirTelaPrincipal();
-                    Toast.makeText(LoginActivity.this, "Logado com "+ email +". Seja Bem-Vindo!", Toast.LENGTH_SHORT).show();
+                    // Convertendo o e-mail do usuário para Base 64 para gerar ID
+                    String indentificadorUsuario = Base64Custom.codificarBase64( usuario.getEmail() );
+                    usuario.setId( indentificadorUsuario );
+
+                    // Salvando nao SharedPreferences o ID base 64 gerado pelo e-mail
+                    // Convertendo e=mail para base 64, que será nosso ID único
+                    Preferencias preferencias  = new Preferencias(context);
+                    preferencias.salvarDados(indentificadorUsuario);
+
+                    String testeident = preferencias.getIdentificador();
+                    Log.i("identificadorLogin", ""+testeident);
+
+
+
+                   abrirTelaPrincipal();
+
                 }else{
                     // Tratamento de excessões
                     String erroLogin;
@@ -123,18 +157,6 @@ public class LoginActivity extends AppCompatActivity {
     private void abrirCadastroUsuario (){
         Intent intent = new Intent(LoginActivity.this,CadastrarLoginActivity.class);
         startActivity(intent);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //Verificar se usuário está logado
-        if ( autenticacao.getCurrentUser() != null){
-            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-            startActivity(intent);
-            Log.i("verificaUsuario", "Usuario está logado!");
-        }else{
-            Log.i("verificausuario", "Usuário não está logado");
-        }
+        finish();
     }
 }
