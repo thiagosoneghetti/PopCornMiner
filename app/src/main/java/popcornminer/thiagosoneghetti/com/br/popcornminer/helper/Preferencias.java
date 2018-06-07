@@ -25,6 +25,6 @@ public class Preferencias {
     }
 
     public String getIdentificador() {
-        return preferences.getString(CHAVE_IDENTIFICADOR, "teste");
+        return preferences.getString(CHAVE_IDENTIFICADOR, null);
     }
 }

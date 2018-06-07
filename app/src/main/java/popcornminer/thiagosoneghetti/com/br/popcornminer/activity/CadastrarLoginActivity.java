@@ -3,9 +3,13 @@ package popcornminer.thiagosoneghetti.com.br.popcornminer.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,6 +46,11 @@ public class CadastrarLoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastrar_login);
+
+        ActionBar actionBar = getSupportActionBar();
+        //actionBar.setIcon(R.mipmap.ic_launcher_foreground);
+        actionBar.setDisplayShowHomeEnabled(true); // Oculta o título da barra de ação
+        actionBar.setDisplayHomeAsUpEnabled(true); // Botão voltar
 
         context = this;
 
@@ -150,7 +159,7 @@ public class CadastrarLoginActivity extends AppCompatActivity {
                             erroExcessao = "Erro ao efeturar cadastro!";
                             e.printStackTrace();
                         }
-                        Toast.makeText(CadastrarLoginActivity.this, ""+erroExcessao, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, ""+erroExcessao, Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -158,10 +167,49 @@ public class CadastrarLoginActivity extends AppCompatActivity {
     };
     // ir para tela de principal
     private void abrirTelaPrincipal (){
-        Intent intent = new Intent(CadastrarLoginActivity.this,MainActivity.class);
+        Intent intent = new Intent(context, MainActivity.class);
         startActivity(intent);
         //Encerrando Activity de cadastro
         finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent btVoltar = new Intent(context, LoginActivity.class);
+                startActivity(btVoltar);
+                finish();
+                break;
+            /*case R.id.bt_mhome_home:
+                Intent irHome = new Intent(CadastrarLoginActivity.this,MainActivity.class);
+                startActivity(irHome);
+                break;*/
+            /*case R.id.bt_mhome_carteira:
+                Intent irCarteira = new Intent(CadastrarLoginActivity.this,CarteiraActivity.class);
+                startActivity(irCarteira);
+                break;
+            case R.id.bt_mhome_transferencia:
+                Intent irTransferencia = new Intent(CadastrarLoginActivity.this,TransferenciaActivity.class);
+                startActivity(irTransferencia);
+                break;
+            case R.id.bt_mhome_sair:
+                autenticacao  = ConfiguracaoFirebase.getFirebaseAutenticacao();
+                autenticacao.signOut();
+                Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
+                Intent irLogin = new Intent(CadastrarLoginActivity.this, LoginActivity.class);
+                startActivity(irLogin);
+                break; */
+            default:
+                super.onOptionsItemSelected(item);
+                break;
+        }
+        return true;
     }
 
 }
