@@ -23,6 +23,10 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
@@ -41,6 +45,7 @@ public class CadastrarLoginActivity extends AppCompatActivity {
     private EditText editConfSenha;
     private Usuario usuario;
     private Context context;
+    private DatabaseReference firebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +127,7 @@ public class CadastrarLoginActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                 // verificando se o usuário foi criado com sucesso
                 if (task.isSuccessful()){
-                    Toast.makeText(context, "Sucesso ao cadastrar usuário!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "Sucesso ao cadastrar usuário!", Toast.LENGTH_SHORT).show();
 
                     // Recuperando usuário criado no Firebase
                     // FirebaseUser usuarioFirebase = task.getResult().getUser();
@@ -135,9 +140,6 @@ public class CadastrarLoginActivity extends AppCompatActivity {
                     // Convertendo e=mail para base 64, que será nosso ID único
                     Preferencias preferencias  = new Preferencias(context);
                     preferencias.salvarDados(indentificadorUsuario);
-
-                    String testeident = preferencias.getIdentificador();
-                    Log.i("identificadorCadastro", ""+testeident);
 
                     // Método responsável por salvar os dados do usuário no Firebase
                     usuario.salvar();
@@ -167,10 +169,34 @@ public class CadastrarLoginActivity extends AppCompatActivity {
     };
     // ir para tela de principal
     private void abrirTelaPrincipal (){
+        mensagemBemVindo();
         Intent intent = new Intent(context, MainActivity.class);
         startActivity(intent);
         //Encerrando Activity de cadastro
         finish();
+    }
+
+    public void mensagemBemVindo(){
+        Preferencias preferencias = new Preferencias(CadastrarLoginActivity.this);
+        String identificador = preferencias.getIdentificador();
+
+        firebase = ConfiguracaoFirebase.getFirebase().child("usuarios").child(identificador);
+
+        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Listar carteiras
+
+                Usuario usuario = dataSnapshot.getValue( Usuario.class );
+                Toast.makeText(CadastrarLoginActivity.this, "Seja Bem-Vindo, "+usuario.getNome()+"! Usuário cadastrado com sucesso.", Toast.LENGTH_LONG).show();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -189,14 +215,17 @@ public class CadastrarLoginActivity extends AppCompatActivity {
             /*case R.id.bt_mhome_home:
                 Intent irHome = new Intent(CadastrarLoginActivity.this,MainActivity.class);
                 startActivity(irHome);
+                finish();
                 break;*/
             /*case R.id.bt_mhome_carteira:
                 Intent irCarteira = new Intent(CadastrarLoginActivity.this,CarteiraActivity.class);
                 startActivity(irCarteira);
+                finish();
                 break;
             case R.id.bt_mhome_transferencia:
                 Intent irTransferencia = new Intent(CadastrarLoginActivity.this,TransferenciaActivity.class);
                 startActivity(irTransferencia);
+                finish();
                 break;
             case R.id.bt_mhome_sair:
                 autenticacao  = ConfiguracaoFirebase.getFirebaseAutenticacao();
@@ -204,6 +233,7 @@ public class CadastrarLoginActivity extends AppCompatActivity {
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
                 Intent irLogin = new Intent(CadastrarLoginActivity.this, LoginActivity.class);
                 startActivity(irLogin);
+                finish();
                 break; */
             default:
                 super.onOptionsItemSelected(item);

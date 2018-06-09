@@ -20,6 +20,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
@@ -37,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText senha;
     private Usuario usuario;
     private Context context;
+    private DatabaseReference firebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +130,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
                    abrirTelaPrincipal();
+                   mensagemBemVindo();
 
                 }else{
                     // Tratamento de excessões
@@ -159,4 +165,29 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+    public void mensagemBemVindo(){
+        Preferencias preferencias = new Preferencias(LoginActivity.this);
+        String identificador = preferencias.getIdentificador();
+
+        firebase = ConfiguracaoFirebase.getFirebase().child("usuarios").child(identificador);
+
+        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+            // Listar carteiras
+
+                Usuario usuario = dataSnapshot.getValue( Usuario.class );
+                Toast.makeText(LoginActivity.this, "Seja Bem-Vindo, "+usuario.getNome()+"!", Toast.LENGTH_LONG).show();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
 }

@@ -17,22 +17,35 @@ public class Carteira implements Serializable{
 
 
     private Long id;
+    private String identificador;
     private String chave_publica;
     private String chave_privada;
     private String descricao;
 
     // Construtores
-    public Carteira(Long id, String c_publica, String c_privada, String desc) {
-        this.id = id;
-        this.chave_publica = c_publica;
-        this.chave_privada = c_privada;
-        this.descricao = desc;
+    public Carteira(){
+
     }
 
-    public Carteira(String c_publica, String c_privada, String desc) {
-        this.chave_publica = c_publica;
-        this.chave_privada = c_privada;
-        this.descricao = desc;
+    // Construtor para SQLite
+    public Carteira(Long id, String chave_publica, String chave_privada, String descricao) {
+        this.id = id;
+        this.chave_publica = chave_publica;
+        this.chave_privada = chave_privada;
+        this.descricao = descricao;
+    }
+    // Construtor para buscar do Firebase
+    public Carteira(String identificador, String chave_publica, String chave_privada, String descricao) {
+        this.identificador = identificador;
+        this.chave_publica = chave_publica;
+        this.chave_privada = chave_privada;
+        this.descricao = descricao;
+    }
+    // Construtor para enviar para o Firebase
+    public Carteira( String chave_publica, String chave_privada, String descricao) {
+        this.chave_publica = chave_publica;
+        this.chave_privada = chave_privada;
+        this.descricao = descricao;
     }
 
     // getters e setters
@@ -67,6 +80,14 @@ public class Carteira implements Serializable{
     }
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public String getIdentificador() {
+        return identificador;
+    }
+
+    public void setIdentificador(String identificador) {
+        this.identificador = identificador;
     }
 
     public void saldoUC(Carteira carteira, final Context context){

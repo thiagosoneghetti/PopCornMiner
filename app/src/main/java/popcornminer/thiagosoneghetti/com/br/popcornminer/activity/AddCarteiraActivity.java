@@ -97,7 +97,7 @@ public class AddCarteiraActivity extends AppCompatActivity {
             }
         });
     }
-
+/* comentado apenas para testar firebase
     public void salvar(String chavepublica, String chaveprivada, String descricao){
 
         Carteira carteira = new Carteira(
@@ -112,7 +112,7 @@ public class AddCarteiraActivity extends AppCompatActivity {
         Intent intent = new Intent(context, CarteiraActivity.class);
         startActivity(intent);
         finish();
-     }
+     }*/
 
      public void salvarFB(String chavepublica, String chaveprivada, String descricao){
 
@@ -120,12 +120,12 @@ public class AddCarteiraActivity extends AppCompatActivity {
 
          //Recuperar o usuário pelo ID Base 64
          Preferencias preferencias = new Preferencias(context);
-         String indentificador = preferencias.getIdentificador();
-         Log.i("log - identificador",indentificador);
+         String identificador = preferencias.getIdentificador();
+         Log.i("log - identificador",identificador);
 
          //Recuperar instância Firebase
          // O que caminho que for configurado aqui, será armazenado no DataSnapshot abaixo
-         firebase = ConfiguracaoFirebase.getFirebase().child("usuario").child(indentificador);
+         firebase = ConfiguracaoFirebase.getFirebase().child("usuarios").child(identificador);
 
         //Era da parte 213 e 214 - verificando se havia e-mail cadastrado
          firebase.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -136,29 +136,25 @@ public class AddCarteiraActivity extends AppCompatActivity {
                 Usuario usuario = dataSnapshot.getValue( Usuario.class );
 
                 // Verifica se o usuário existe
-                if ( dataSnapshot.getValue() == null){
+                if ( dataSnapshot.getValue() != null){
                     // pode ser que de erro por conta do identificador do preferentes - VERIFICAr
                     //Recuperar o usuário pelo ID Base 64
                     Preferencias preferencias = new Preferencias(context);
-                    String indentificador = preferencias.getIdentificador();
-                    Log.i("log - identificador Sn",indentificador);
+                    String identificador = preferencias.getIdentificador();
+                    Log.i("log - identificador Sn",identificador);
 
                     firebase = ConfiguracaoFirebase.getFirebase();
-                    firebase = firebase.child("carteira")
-                                       .child( indentificador ).push();
+                    firebase = firebase.child("carteiras")
+                                       .child( identificador ).push();
 
                     firebase.setValue( carteiraFB );
 
                     //carteiraDao.inserir( carteiraFB );
                     Toast.makeText(AddCarteiraActivity.this, "Carteira\""+ carteiraFB.getDescricao() +"\" adicionada.", Toast.LENGTH_SHORT).show();
 
+                    Intent intent = new Intent(context, CarteiraActivity.class);
+                    startActivity(intent);
                     finish();
-
-
-
-
-
-
                 }else{
                     // Caso não encontre a conta criada
                     Toast.makeText(context, "Usuário não encontrado!", Toast.LENGTH_SHORT).show();
@@ -171,6 +167,7 @@ public class AddCarteiraActivity extends AppCompatActivity {
             }
         });
      };
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -185,18 +182,22 @@ public class AddCarteiraActivity extends AppCompatActivity {
             case android.R.id.home:
                 Intent btVoltar = new Intent(context,CarteiraActivity.class);
                 startActivity(btVoltar);
+                finish();
                 break;
             case R.id.bt_mcart_home:
                 Intent irHome = new Intent(context,MainActivity.class);
                 startActivity(irHome);
+                finish();
                 break;
             /*case R.id.bt_mcart_carteira:
                 Intent irCarteira = new Intent(context,CarteiraActivity.class);
                 startActivity(irCarteira);
+                finish();
                 break; */
             case R.id.bt_mcart_transferencia:
                 Intent irTransferencia = new Intent(context,TransferenciaActivity.class);
                 startActivity(irTransferencia);
+                finish();
                 break;
             case R.id.bt_mcart_sair:
                 usuarioFirebase  = ConfiguracaoFirebase.getFirebaseAutenticacao();
@@ -204,6 +205,7 @@ public class AddCarteiraActivity extends AppCompatActivity {
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
                 Intent irLogin = new Intent(context,LoginActivity.class);
                 startActivity(irLogin);
+                finish();
                 break;
             default:
                 super.onOptionsItemSelected(item);

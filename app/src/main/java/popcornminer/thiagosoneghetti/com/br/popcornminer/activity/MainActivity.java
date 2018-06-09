@@ -32,8 +32,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mensagemBemVindo();
-
         ActionBar actionBar = getSupportActionBar();
 //        ActionBar actionBar = getActionBar();
         actionBar.setIcon(R.mipmap.ic_launcher_foreground);
@@ -75,18 +73,22 @@ public class MainActivity extends AppCompatActivity {
             /*case android.R.id.home:
                 Intent btVoltar = new Intent(MainActivity.this,MainActivity.class);
                 startActivity(btVoltar);
+                finish();
                 break;
             case R.id.bt_mhome_home:
                 Intent irHome = new Intent(MainActivity.this,MainActivity.class);
                 startActivity(irHome);
+                finish();
                 break;*/
             /*case R.id.bt_mhome_carteira:
                 Intent irCarteira = new Intent(MainActivity.this,CarteiraActivity.class);
                 startActivity(irCarteira);
+                finish();
                 break;
             case R.id.bt_mhome_transferencia:
                 Intent irTransferencia = new Intent(MainActivity.this,TransferenciaActivity.class);
                 startActivity(irTransferencia);
+                finish();
                 break;*/
             case R.id.bt_mhome_sair:
                 autenticacao  = ConfiguracaoFirebase.getFirebaseAutenticacao();
@@ -94,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
                 Intent irLogin = new Intent(MainActivity.this,LoginActivity.class);
                 startActivity(irLogin);
+                finish();
                 break;
             default:
                 super.onOptionsItemSelected(item);
@@ -102,17 +105,4 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void mensagemBemVindo(){
-        autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
-        FirebaseUser usuarioFirebase = autenticacao.getCurrentUser();
-        // Buscando e-mail do usuário no Firebase
-        String email = usuarioFirebase.getEmail();
-
-        /*String identificador = Base64Custom.codificarBase64(autenticacao.getCurrentUser().getEmail());
-        firebase = ConfiguracaoFirebase.getFirebase().child("usuario").child(identificador);
-        String nome = new (firebase.child("nome"));
-        */
-        Toast.makeText(MainActivity.this, "Seja Bem-Vindo! Logado com "+ email +"!", Toast.LENGTH_LONG).show();
-
-    }
 }
