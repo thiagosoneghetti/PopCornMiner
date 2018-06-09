@@ -29,25 +29,26 @@ public class CarteiraDao {
         dbHelper = new CarteiraOpenHelper(context);
     }
 
+    // responsável por inserir a carteira no banco SQLite
     public long inserir(Carteira carteira){
-        // Gets the data repository in write mode
+        // Obtém o repositório de dados no modo de gravação
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        // Create a new map of values, where column names are the keys
+        // Cria um novo mapa de valores, onde os nomes das colunas são as chaves e recebe os valores
         ContentValues values = new ContentValues();
         values.put(COLUNA_CHAVE_PUBLICA, carteira.getChave_publica());
         values.put(COLUNA_CHAVE_PRIVADA, carteira.getChave_privada());
         values.put(COLUNA_DESCRICAO, carteira.getDescricao());
 
-        // Insert the new row, returning the primary key value of the new row
+        // Insere a nova linha, retornando o valor da chave primária da nova linha
         long newRowId = db.insert(TABELA, null, values);
         db.close();
         return newRowId;
     }
 
-
+    // Recuperar/mostrar a lista de carteiras cadastradas
     public List<Carteira> recuperarCarteira() {
-
+        // Obtém o repositório de dados no modo de leitura
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         // Recuperar as carteiras
@@ -63,6 +64,7 @@ public class CarteiraDao {
         ids = new ArrayList<>();
 
         // Listar as carteiras
+        // Buscará no banco até não encontrar mais nenhuma carteira e vai inserindo na "List carteiras"
         while ( cursor.moveToNext() ) {
             ids.add( Long.parseLong( cursor.getString( indiceColunaId ) ));
 
@@ -70,7 +72,7 @@ public class CarteiraDao {
             String chave_publica = cursor.getString(cursor.getColumnIndex(COLUNA_CHAVE_PUBLICA));
             String chave_privada = cursor.getString(cursor.getColumnIndex(COLUNA_CHAVE_PRIVADA));
             String descricao = cursor.getString(cursor.getColumnIndex(COLUNA_DESCRICAO));
-
+            //  Instancia uma nova carteira e adiciona na List carteiras
             Carteira carteira = new Carteira(id,chave_publica, chave_privada, descricao);
             carteiras.add(carteira);
         }
@@ -80,7 +82,7 @@ public class CarteiraDao {
         return carteiras;
     }
 
-
+    // Responsável por remover do banco a carteira pelo ID
     public void removerCarteira (Long id){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String sql = "DELETE FROM "+ TABELA +" WHERE "+ COLUNA_ID +" = "+id;

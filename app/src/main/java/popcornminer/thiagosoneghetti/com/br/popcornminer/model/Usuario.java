@@ -15,11 +15,11 @@ public class Usuario {
     public Usuario() {
     }
 
+    // Responsável por adicionar um novo usuário no banco de dados do firebase (não é criação de usuário)
     public void salvar(){
         DatabaseReference referenciaDatabase = ConfiguracaoFirebase.getFirebase();
         // Adicionando um usuário a referencia do Firebase, em seguida o ID, e depois passando
         referenciaDatabase.child("usuarios").child( getId() ).setValue( this );
-
     }
 
     // @Exclude - é utilizado para o Firebase ignorar o método e não salvar no servidor

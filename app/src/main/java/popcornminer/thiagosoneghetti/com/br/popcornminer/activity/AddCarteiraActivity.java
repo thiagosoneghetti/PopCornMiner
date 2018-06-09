@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Base64Custom;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Preferencias;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.model.CarteiraDao;
@@ -43,23 +44,24 @@ public class AddCarteiraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_carteira);
 
+        // Chamando o objeto do Firebase que é responsável pela autenticação
         usuarioFirebase = ConfiguracaoFirebase.getFirebaseAutenticacao();
 
-        //firebase = ConfiguracaoFirebase.getFirebase();
-        //firebase.child("pontos").setValue("800");
-
+        // Configurações menu superior (ActionBar)
         ActionBar actionBar = getSupportActionBar();
-        //actionBar.setIcon(R.mipmap.ic_launcher_foreground);
-        actionBar.setDisplayShowHomeEnabled(true); // Oculta o título da barra de ação
-        actionBar.setDisplayHomeAsUpEnabled(true); // Botão voltar
+        //actionBar.setIcon(R.mipmap.ic_launcher_foreground); // Atribuir um ícone na actionbar
+        actionBar.setDisplayShowHomeEnabled(true); // Habilitar o título da barra de ação
+        actionBar.setDisplayHomeAsUpEnabled(true); // Habilitar botão voltar
 
         context = this;
+        // Recuperando os elementos da tela pelo ID
         eChavePublica = findViewById(R.id.editChavePublicaId);
         eChavePrivada = findViewById(R.id.editChavePrivadaId);
         eDescricao =  findViewById(R.id.editDescricaoId);
         btSalvarCarteira = findViewById(R.id.btSalvarCarteiraId);
         carteiraDao = new CarteiraDao(context);
 
+        // Função do botão "Adicionar" que faz a verificação dos campos e salva a carteira
         btSalvarCarteira.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,38 +69,47 @@ public class AddCarteiraActivity extends AppCompatActivity {
                 String chaveprivada = eChavePrivada.getText().toString();
                 String descricao = eDescricao.getText().toString();
 
-                // Confirmando se algum dos campos estão vazios antes de salvar
-                if (chavepublica.equals("") || chaveprivada.equals("") || descricao.equals("")) {
-                    // Verifiquando quais campos estão vazios e exibindo retorno
-                    if (chavepublica.equals("") && chaveprivada.equals("") && descricao.equals("")) {
-                        Toast.makeText(context, "Preencha todos os campos.", Toast.LENGTH_SHORT).show();
-                    } else if (descricao.equals("")) {
-                        Toast.makeText(context, "Insira uma descrição.", Toast.LENGTH_SHORT).show();
-                    } else if (chaveprivada.equals("")) {
-                        Toast.makeText(context, "Insira uma chave privada.", Toast.LENGTH_SHORT).show();
-                    } else if (chavepublica.equals("")) {
-                        Toast.makeText(context, "Insira uma chave pública.", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    // Verificando se há alguma chave inválida
-                    if(chaveprivada.length() != 64 || chavepublica.length() != 66) {
-                        // Verificando qual chave é inválida e dando retorno
-                        if (chaveprivada.length() != 64) {
-                            Toast.makeText(context, "Insira uma chave privada válida.", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(context, "Insira uma chave pública válida.", Toast.LENGTH_SHORT).show();
+                // Verificando se possui conexão com a internet
+                Boolean conexaoInternet = ConexaoInternet.verificaConexao(context);
+                if ( conexaoInternet == true ) {
+                    // Confirmando se algum campo está vazio antes de salvar
+                    if (chavepublica.equals("") || chaveprivada.equals("") || descricao.equals("")) {
+                        // Verifiquando quais campos estão vazios e exibindo retorno
+                        if (chavepublica.equals("") && chaveprivada.equals("") && descricao.equals("")) {
+                            Toast.makeText(context, "Preencha todos os campos.", Toast.LENGTH_SHORT).show();
+                        } else if (descricao.equals("")) {
+                            Toast.makeText(context, "Insira uma descrição.", Toast.LENGTH_SHORT).show();
+                        } else if (chaveprivada.equals("")) {
+                            Toast.makeText(context, "Insira uma chave privada.", Toast.LENGTH_SHORT).show();
+                        } else if (chavepublica.equals("")) {
+                            Toast.makeText(context, "Insira uma chave pública.", Toast.LENGTH_SHORT).show();
                         }
-                    }else{
-                        // Salvando a carteira
-                        //salvar(chavepublica, chaveprivada, descricao);
-                        salvarFB(chavepublica, chaveprivada, descricao);
+                    } else {
+                        // Verificando se há alguma chave inválida
+                        if (chaveprivada.length() != 64 || chavepublica.length() != 66) {
+                            // Verificando qual chave é inválida e dando retorno
+                            if (chaveprivada.length() != 64) {
+                                Toast.makeText(context, "Insira uma chave privada válida.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(context, "Insira uma chave pública válida.", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            // Salvando a carteira
+                            // Método abaixo comentado é para salvar no SQLite, não utilizado mais
+                            //salvar(chavepublica, chaveprivada, descricao);
+
+                            // Método para salvar carteira no Firebase
+                            salvarFB(chavepublica, chaveprivada, descricao);
+                        }
                     }
+                } else{
+                    Toast.makeText(context, "Sem conexão com a internet.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
-/* comentado apenas para testar firebase
-    public void salvar(String chavepublica, String chaveprivada, String descricao){
+    // Salvar a carteira de forma Offiline, somente no dispositivo, não sendo utilizado no momento
+/*    public void salvar(String chavepublica, String chaveprivada, String descricao){
 
         Carteira carteira = new Carteira(
             chavepublica,
@@ -116,18 +127,17 @@ public class AddCarteiraActivity extends AppCompatActivity {
 
      public void salvarFB(String chavepublica, String chaveprivada, String descricao){
 
+         //
          final Carteira carteiraFB = new Carteira(chavepublica, chaveprivada, descricao);
 
          //Recuperar o usuário pelo ID Base 64
          Preferencias preferencias = new Preferencias(context);
          String identificador = preferencias.getIdentificador();
-         Log.i("log - identificador",identificador);
 
-         //Recuperar instância Firebase
+         //Recuperar instância Firebase no local informado : usuarios >> email em base64
          // O que caminho que for configurado aqui, será armazenado no DataSnapshot abaixo
          firebase = ConfiguracaoFirebase.getFirebase().child("usuarios").child(identificador);
 
-        //Era da parte 213 e 214 - verificando se havia e-mail cadastrado
          firebase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -137,26 +147,29 @@ public class AddCarteiraActivity extends AppCompatActivity {
 
                 // Verifica se o usuário existe
                 if ( dataSnapshot.getValue() != null){
-                    // pode ser que de erro por conta do identificador do preferentes - VERIFICAr
+
                     //Recuperar o usuário pelo ID Base 64
                     Preferencias preferencias = new Preferencias(context);
                     String identificador = preferencias.getIdentificador();
-                    Log.i("log - identificador Sn",identificador);
 
                     firebase = ConfiguracaoFirebase.getFirebase();
+                    // Adiciono um nó carteiras, um outro nó com o identificador (email base64) e um push para gerar uma key
                     firebase = firebase.child("carteiras")
                                        .child( identificador ).push();
 
+                    // Adiciona a carteira para o Firebase
                     firebase.setValue( carteiraFB );
 
+                    // Abaixo método que inseria localmente a carteira no SQLite, não utilizado mais
                     //carteiraDao.inserir( carteiraFB );
                     Toast.makeText(AddCarteiraActivity.this, "Carteira\""+ carteiraFB.getDescricao() +"\" adicionada.", Toast.LENGTH_SHORT).show();
 
+                    // Após cadastrar vai para tela de Carteiras
                     Intent intent = new Intent(context, CarteiraActivity.class);
                     startActivity(intent);
                     finish();
                 }else{
-                    // Caso não encontre a conta criada
+                    // Caso não encontre a conta criada, retorna uma mensagem para o usuário
                     Toast.makeText(context, "Usuário não encontrado!", Toast.LENGTH_SHORT).show();
                 }
 
@@ -168,14 +181,14 @@ public class AddCarteiraActivity extends AppCompatActivity {
         });
      };
 
-
+    // Criação do Menu na action bar, onde é possivel fazer logout, ir para outras telas
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_carteira,menu);
         return super.onCreateOptionsMenu(menu);
     }
-
+    // Opções que foram configuradas para aparecer no menu, são acões para irem para outras telas, e fazer logout
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -189,17 +202,13 @@ public class AddCarteiraActivity extends AppCompatActivity {
                 startActivity(irHome);
                 finish();
                 break;
-            /*case R.id.bt_mcart_carteira:
-                Intent irCarteira = new Intent(context,CarteiraActivity.class);
-                startActivity(irCarteira);
-                finish();
-                break; */
             case R.id.bt_mcart_transferencia:
                 Intent irTransferencia = new Intent(context,TransferenciaActivity.class);
                 startActivity(irTransferencia);
                 finish();
                 break;
             case R.id.bt_mcart_sair:
+                // Desconecta o usuário atual do aplicativo
                 usuarioFirebase  = ConfiguracaoFirebase.getFirebaseAutenticacao();
                 usuarioFirebase.signOut();
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();

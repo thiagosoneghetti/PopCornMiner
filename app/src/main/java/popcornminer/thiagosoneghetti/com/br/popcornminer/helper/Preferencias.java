@@ -18,12 +18,12 @@ public class Preferencias {
         preferences = contexto.getSharedPreferences(NOME_ARQUIVO, MODE);
         editor = preferences.edit();
     }
-
+    // Salvar o identificador do usuário atual
     public void salvarDados ( String identificadorUsuario ){
         editor.putString(CHAVE_IDENTIFICADOR, identificadorUsuario);
         editor.commit();
     }
-
+    // Buscar o identificador do usuário atual
     public String getIdentificador() {
         return preferences.getString(CHAVE_IDENTIFICADOR, null);
     }

@@ -6,6 +6,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class CarteiraOpenHelper extends SQLiteOpenHelper{
     //https://developer.android.com/guide/topics/data/data-storage?hl=pt-Br#db
+
+
+
     private static final int VERSAO_DB = 1;
     private static final String NOME_DB = "DBCARTEIRA";
     private static final String NOME_TABELA = "carteira";

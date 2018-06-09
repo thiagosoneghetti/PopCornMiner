@@ -52,20 +52,21 @@ public class CadastrarLoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastrar_login);
 
+        // Configurações menu superior (ActionBar)
         ActionBar actionBar = getSupportActionBar();
-        //actionBar.setIcon(R.mipmap.ic_launcher_foreground);
-        actionBar.setDisplayShowHomeEnabled(true); // Oculta o título da barra de ação
-        actionBar.setDisplayHomeAsUpEnabled(true); // Botão voltar
+        //actionBar.setIcon(R.mipmap.ic_launcher_foreground); // Atribuir um ícone na actionbar
+        actionBar.setDisplayShowHomeEnabled(true); // Habilitar o título da barra de ação
+        actionBar.setDisplayHomeAsUpEnabled(true); // Habilitar botão voltar
 
         context = this;
-
+        // Recuperando os elementos da tela pelo ID
         botaoCadastrar = findViewById(R.id.btCadastrarLogin);
         editNome = findViewById(R.id.editNome);
         editEmail = findViewById(R.id.editEmail);
         editSenha = findViewById(R.id.editSenha);
         editConfSenha = findViewById(R.id.editConfSenha);
 
-
+        // Função do botão que possui que faz a verificação
         botaoCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,7 +105,7 @@ public class CadastrarLoginActivity extends AppCompatActivity {
                               cadastrarUsuario();
 
                           } else {
-                              // Verificando se a senha e confirmação de senha conferem
+                              // Informa para o usuário que as senhas não confere, e limpa os campos de senha
                               Toast.makeText(context, "Senhas não conferem!", Toast.LENGTH_SHORT).show();
                               editSenha.setText("");
                               editConfSenha.setText("");
@@ -116,21 +117,18 @@ public class CadastrarLoginActivity extends AppCompatActivity {
             }
         });
     }
-
+    // Método responsável por salvar usuário no Firebase
     private void cadastrarUsuario(){
+        // Recuperando instância de autenticação do firebase
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
 
-        //Relização do Cadastro
+        //Relização do Cadastro pelo e-mail e senha inseridos
         autenticacao.createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
             .addOnCompleteListener(CadastrarLoginActivity.this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                 // verificando se o usuário foi criado com sucesso
                 if (task.isSuccessful()){
-                    //Toast.makeText(context, "Sucesso ao cadastrar usuário!", Toast.LENGTH_SHORT).show();
-
-                    // Recuperando usuário criado no Firebase
-                    // FirebaseUser usuarioFirebase = task.getResult().getUser();
 
                     // Convertendo o e-mail do usuário para Base 64 para gerar ID
                     String indentificadorUsuario = Base64Custom.codificarBase64( usuario.getEmail() );
@@ -176,17 +174,19 @@ public class CadastrarLoginActivity extends AppCompatActivity {
         finish();
     }
 
+    // Mostra mensagem que usuário foi criado com sucesso e bem vindo com o nome do usuário
     public void mensagemBemVindo(){
+        // Buscando o identificador do usuário atual para pesquisa no firebase
         Preferencias preferencias = new Preferencias(CadastrarLoginActivity.this);
         String identificador = preferencias.getIdentificador();
 
+        // Encontrando o usuário pelo seu identificador
         firebase = ConfiguracaoFirebase.getFirebase().child("usuarios").child(identificador);
 
         firebase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Listar carteiras
-
+                // Usuário é instanciado, pegado seu nome para mostrar na tela
                 Usuario usuario = dataSnapshot.getValue( Usuario.class );
                 Toast.makeText(CadastrarLoginActivity.this, "Seja Bem-Vindo, "+usuario.getNome()+"! Usuário cadastrado com sucesso.", Toast.LENGTH_LONG).show();
 
@@ -199,42 +199,21 @@ public class CadastrarLoginActivity extends AppCompatActivity {
         });
     }
 
+    // Criação do Menu na action bar, onde é possivel fazer logout, ir para outras telas
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return super.onCreateOptionsMenu(menu);
     }
-
+    // Opções que foram configuradas para aparecer no menu, são acões para irem para outras telas, e fazer logout
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                // Botão voltar, caso usuário queira voltar para tela de login
                 Intent btVoltar = new Intent(context, LoginActivity.class);
                 startActivity(btVoltar);
                 finish();
                 break;
-            /*case R.id.bt_mhome_home:
-                Intent irHome = new Intent(CadastrarLoginActivity.this,MainActivity.class);
-                startActivity(irHome);
-                finish();
-                break;*/
-            /*case R.id.bt_mhome_carteira:
-                Intent irCarteira = new Intent(CadastrarLoginActivity.this,CarteiraActivity.class);
-                startActivity(irCarteira);
-                finish();
-                break;
-            case R.id.bt_mhome_transferencia:
-                Intent irTransferencia = new Intent(CadastrarLoginActivity.this,TransferenciaActivity.class);
-                startActivity(irTransferencia);
-                finish();
-                break;
-            case R.id.bt_mhome_sair:
-                autenticacao  = ConfiguracaoFirebase.getFirebaseAutenticacao();
-                autenticacao.signOut();
-                Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
-                Intent irLogin = new Intent(CadastrarLoginActivity.this, LoginActivity.class);
-                startActivity(irLogin);
-                finish();
-                break; */
             default:
                 super.onOptionsItemSelected(item);
                 break;

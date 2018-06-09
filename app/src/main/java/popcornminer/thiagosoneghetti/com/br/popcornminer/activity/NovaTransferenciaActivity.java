@@ -1,5 +1,6 @@
 package popcornminer.thiagosoneghetti.com.br.popcornminer.activity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
@@ -31,22 +34,39 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
     private EditText editCPublicaDest;
     private EditText editValorTranf;
     private Context context;
+    private Button btnScan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nova_transferencia);
 
+        // Configurações menu superior (ActionBar)
         ActionBar actionBar = getSupportActionBar();
-        //actionBar.setIcon(R.mipmap.ic_launcher_foreground);
-        actionBar.setDisplayShowHomeEnabled(true); // Oculta o título da barra de ação
-        actionBar.setDisplayHomeAsUpEnabled(true); // Botão voltar
+        //actionBar.setIcon(R.mipmap.ic_launcher_foreground); // Atribuir um ícone na actionbar
+        actionBar.setDisplayShowHomeEnabled(true); // Habilitar o título da barra de ação
+        actionBar.setDisplayHomeAsUpEnabled(true); // Habilitar botão voltar
 
         context = this;
+        // Recuperando os elementos da tela pelo ID
         botaoTransferir = findViewById(R.id.btTransferirId);
         editCPublicaDest = findViewById(R.id.editCPublicaDestinoId);
         editValorTranf = findViewById(R.id.editValorTransfId);
         editDescricaoCarteira = findViewById(R.id.editDescricaoTransfId);
+        btnScan = findViewById(R.id.btnScan);
+        final Activity activity = this;
+
+        // Código responsável pelo Scaner de QRcode
+        btnScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IntentIntegrator intentIntegrator = new IntentIntegrator(activity);
+                intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+                intentIntegrator.setPrompt("Camera Scan");
+                intentIntegrator.setCameraId(0);
+                intentIntegrator.initiateScan();
+            }
+        });
 
 
 
@@ -54,10 +74,11 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
         final Intent intent = getIntent();
         if(intent.getSerializableExtra("carteira") != null) {
             carteira = (Carteira) intent.getSerializableExtra("carteira");
-
+            // Passando o nome da carteira selecionada para a tela, mostrando o nome da carteira na tela de transferencia
             editDescricaoCarteira.setText(carteira.getDescricao());
         }
 
+        // Botão responsável por acionar a transferencia
         botaoTransferir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,7 +102,7 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
                         // Capturando os dados necessários para transação
                         String chave_publica_destino = editCPublicaDest.getText().toString();
                         Float valor = Float.parseFloat(editValorTranf.getText().toString());
-
+                        // Método responsável pela confirmação da transferência, se selecionado sim, será realizada, se não, cancelada.
                         confirmarTransferencia(carteira, chave_publica_destino, valor);
                     }
                 } else {
@@ -92,6 +113,26 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
 
     }
 
+    // Método responsável por pegar os dados scaneador no QR code
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+        if(result != null){
+            if(result.getContents() != null){
+                alert(result.getContents());
+            }else {
+                alert("Scan cancelado");
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+    // Método responsável por exivir a mensagem do Scan QR code
+    private void alert (String msg){
+        Toast.makeText(getApplicationContext(),msg, Toast.LENGTH_LONG);
+    }
+
+    // Pede para usuário confirmar a transferencia, caso sim realiza a transferencia, se não, é abortada a transferencia
     private void confirmarTransferencia (Carteira carteira, String chave_publica_destino, Float valor ){
         final Carteira carteiraDestino = carteira;
         final String chavePublicaDestino = chave_publica_destino;
@@ -112,8 +153,9 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
         msgBox.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+            // Chama o método que é responsável por realizar a transferencia
             carteiraDestino.transferenciaUC(carteiraDestino, chavePublicaDestino, valorDestino, NovaTransferenciaActivity.this);
-
+            // Volta para a tela de transferencias
             Intent intent = new Intent(NovaTransferenciaActivity.this,TransferenciaActivity.class);
             startActivity(intent);
             }
@@ -121,13 +163,14 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
         msgBox.show();
     }
 
+    // Criação do Menu na action bar, onde é possivel fazer logout, ir para outras telas
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_transferencia,menu);
         return super.onCreateOptionsMenu(menu);
     }
-
+    // Opções que foram configuradas para aparecer no menu, são acões para irem para outras telas, e fazer logout
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -143,11 +186,8 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
                 Intent irCarteira = new Intent(NovaTransferenciaActivity.this,CarteiraActivity.class);
                 startActivity(irCarteira);
                 break;
-            /*case R.id.bt_mtransf_transferencia:
-                Intent irTransferencia = new Intent(NovaTransferenciaActivity.this,TransferenciaActivity.class);
-                startActivity(irTransferencia);
-                break;*/
             case R.id.bt_mtransf_sair:
+                // Desconecta o usuário atual do aplicativo
                 autenticacao  = ConfiguracaoFirebase.getFirebaseAutenticacao();
                 autenticacao.signOut();
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();

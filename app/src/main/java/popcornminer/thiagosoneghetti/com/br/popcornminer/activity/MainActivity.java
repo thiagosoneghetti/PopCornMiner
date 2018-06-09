@@ -32,17 +32,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Configurações menu superior (ActionBar)
         ActionBar actionBar = getSupportActionBar();
-//        ActionBar actionBar = getActionBar();
-        actionBar.setIcon(R.mipmap.ic_launcher_foreground);
-        actionBar.setDisplayShowHomeEnabled(true); // Oculta o título da barra de ação
-        actionBar.setDisplayHomeAsUpEnabled(false); // Botão voltar
+        //actionBar.setIcon(R.mipmap.ic_launcher_foreground); // Atribuir um ícone na actionbar
+        actionBar.setDisplayShowHomeEnabled(true); // Habilitar o título da barra de ação
+        actionBar.setDisplayHomeAsUpEnabled(true); // Habilitar botão voltar
+        //actionBar.setTitle("Navegacao PopCornMiner");
 
-        //getSupportActionBar().setTitle("Navegacao PopCornMiner");
-
+        // Recuperando os elementos da tela pelo ID
         botaoCarteira = findViewById(R.id.btCarteiraId);
         botaoTransferencia = findViewById(R.id.btTransferenciaId);
 
+        // Botão de carteira, responsável para ir para tela de carteiras
         botaoCarteira.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        // Botão de carteira, responsável para ir para tela de transferencias
         botaoTransferencia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,37 +61,19 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Criação do Menu na action bar, onde é possivel fazer logout, ir para outras telas
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_home,menu);
         return super.onCreateOptionsMenu(menu);
     }
-
+    // Opções que foram configuradas para aparecer no menu, são acões para irem para outras telas, e fazer logout
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            /*case android.R.id.home:
-                Intent btVoltar = new Intent(MainActivity.this,MainActivity.class);
-                startActivity(btVoltar);
-                finish();
-                break;
-            case R.id.bt_mhome_home:
-                Intent irHome = new Intent(MainActivity.this,MainActivity.class);
-                startActivity(irHome);
-                finish();
-                break;*/
-            /*case R.id.bt_mhome_carteira:
-                Intent irCarteira = new Intent(MainActivity.this,CarteiraActivity.class);
-                startActivity(irCarteira);
-                finish();
-                break;
-            case R.id.bt_mhome_transferencia:
-                Intent irTransferencia = new Intent(MainActivity.this,TransferenciaActivity.class);
-                startActivity(irTransferencia);
-                finish();
-                break;*/
             case R.id.bt_mhome_sair:
+                // Desconecta o usuário atual do aplicativo
                 autenticacao  = ConfiguracaoFirebase.getFirebaseAutenticacao();
                 autenticacao.signOut();
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();

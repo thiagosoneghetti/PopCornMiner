@@ -48,9 +48,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Método que verifica se usuário ainda está logado, caso sim, ele não precisará inserir login e senha novamente
         verificarSeUsuarioLogado();
 
         context = this;
+        // Recuperando os elementos da tela pelo ID
         botaoLogin = findViewById(R.id.btLogin);
         botaoActivityCadastrar = findViewById(R.id.btActivityCadastrar);
         email = findViewById(R.id.editEmailLogin);
@@ -60,10 +62,11 @@ public class LoginActivity extends AppCompatActivity {
         botaoActivityCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                abrirCadastroUsuario();
+                abrirCadastrarUsuario();
             }
         });
 
+        // Botão responsável por fazer login
         botaoLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                     usuario = new Usuario();
                     usuario.setEmail(email.getText().toString());
                     usuario.setSenha(senha.getText().toString());
-
+                    // Verifica se algum campo está sem preencher
                     if (usuario.getEmail().equals("") || usuario.getSenha().equals("")) {
                         // Verificando se os campos estão vazios, caso estejam apresenta uma mensagem informando.
                         if (usuario.getEmail().equals("") && usuario.getSenha().equals("")) {
@@ -84,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(LoginActivity.this, "Digite sua senha!", Toast.LENGTH_SHORT).show();
                         }
                     } else {
+                        // Metodo que faz a validação do login
                         validarLogin();
                     }
                 } else {
@@ -94,7 +98,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void verificarSeUsuarioLogado(){
-
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
         //Verificar se usuário está logado, caso sim, vai direto para tela principal
         if ( autenticacao.getCurrentUser() != null){
@@ -103,10 +106,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    // Método que faz a validação do login
     private void validarLogin(){
-
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
-        // Fazer Login
+        // Fazer Login pelo email e senha inseridos
         autenticacao.signInWithEmailAndPassword(usuario.getEmail(),usuario.getSenha())
         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -124,13 +127,10 @@ public class LoginActivity extends AppCompatActivity {
                     Preferencias preferencias  = new Preferencias(context);
                     preferencias.salvarDados(indentificadorUsuario);
 
-                    String testeident = preferencias.getIdentificador();
-                    Log.i("identificadorLogin", ""+testeident);
-
-
-
-                   abrirTelaPrincipal();
-                   mensagemBemVindo();
+                    // Abre a pagina inicial do aplicativo
+                    abrirTelaPrincipal();
+                    // Mostra mensagem de boas vindas com o nome do usuário
+                    mensagemBemVindo();
 
                 }else{
                     // Tratamento de excessões
@@ -152,31 +152,33 @@ public class LoginActivity extends AppCompatActivity {
             }});
 
     }
-
+    // metodo que vai para tela principal do aplicativo
     private void abrirTelaPrincipal (){
         Intent intent = new Intent(LoginActivity.this,MainActivity.class);
         startActivity(intent);
         //Encerrando Activity de cadastro
         finish();
     }
-
-    private void abrirCadastroUsuario (){
+    // metodo que vai para tela de cadastro de novo usuario
+    private void abrirCadastrarUsuario (){
         Intent intent = new Intent(LoginActivity.this,CadastrarLoginActivity.class);
         startActivity(intent);
         finish();
     }
 
+    // Metodo para mostrar mensagem de boas vindas com nome do usuário
     public void mensagemBemVindo(){
+        // Buscando o identificador do usuário atual para pesquisa no firebase
         Preferencias preferencias = new Preferencias(LoginActivity.this);
-        String identificador = preferencias.getIdentificador();
 
+        String identificador = preferencias.getIdentificador();
+        // Encontrando o usuário pelo seu identificador
         firebase = ConfiguracaoFirebase.getFirebase().child("usuarios").child(identificador);
 
         firebase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-            // Listar carteiras
-
+                // Usuário é instanciado, pegado seu nome para mostrar na tela
                 Usuario usuario = dataSnapshot.getValue( Usuario.class );
                 Toast.makeText(LoginActivity.this, "Seja Bem-Vindo, "+usuario.getNome()+"!", Toast.LENGTH_LONG).show();
 

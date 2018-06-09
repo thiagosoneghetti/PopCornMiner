@@ -55,4 +55,5 @@
         app:layout_constraintStart_toEndOf="@+id/imageViewListaTransferencia"
         app:layout_constraintTop_toBottomOf="@+id/itListaTransferenciaDescricao"
         tools:ignore="MissingConstraints" />
+
 </android.support.constraint.ConstraintLayout>

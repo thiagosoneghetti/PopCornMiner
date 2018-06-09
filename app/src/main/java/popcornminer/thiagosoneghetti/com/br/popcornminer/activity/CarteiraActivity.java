@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.adapter.CarteiraAdpter;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.adapter.CarteiraFbAdapter;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Preferencias;
@@ -43,88 +42,87 @@ public class CarteiraActivity extends AppCompatActivity {
     private ListView listaCarteiras;
     private Context context;
     private FloatingActionButton botaoAddCarteira;
-    private CarteiraFbAdapter carteiraFbAdapter;
-   // private ArrayList<Carteira> carteiras;
     private ValueEventListener valueEventListenerCarteira;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_carteira);
 
+        // Chamando o objeto do Firebase que é responsável pela autenticação
         usuarioFirebase = ConfiguracaoFirebase.getFirebaseAutenticacao();
 
+        // Configurações menu superior (ActionBar)
         ActionBar actionBar = getSupportActionBar();
-        //actionBar.setIcon(R.mipmap.ic_launcher_foreground);
-        actionBar.setDisplayShowHomeEnabled(true); // Oculta o título da barra de ação
-        actionBar.setDisplayHomeAsUpEnabled(true); // Botão voltar
+        //actionBar.setIcon(R.mipmap.ic_launcher_foreground); // Atribuir um ícone na actionbar
+        actionBar.setDisplayShowHomeEnabled(true); // Habilitar o título da barra de ação
+        actionBar.setDisplayHomeAsUpEnabled(true); // Habilitar botão voltar
 
-        carteiraDao = new CarteiraDao(this);
+        //carteiraDao = new CarteiraDao(this);  // Não utilziado, somente no SQLite
         listaCarteiras = findViewById(R.id.listCarteirasId);
         context = this;
 
+    // Processos para recuperação das carteira no Firebase
+        // Verificando se possui conexão com a internet, se sim busca lista de contatos, se não informa para o usuário que está sem internet
+        Boolean conexaoInternet = ConexaoInternet.verificaConexao(context);
+        if ( conexaoInternet == true ) {
+            Preferencias preferencias = new Preferencias(CarteiraActivity.this);
+            String identificador = preferencias.getIdentificador();
 
-        // Listagem das carteiras
-        //carteiras = new ArrayList<>();
+            //Recuperar instância Firebase no local informado : carteiras >> email em base64
+            // O que caminho que for configurado aqui, será armazenado no DataSnapshot abaixo
+            firebase = ConfiguracaoFirebase.getFirebase().child("carteiras").child(identificador);
 
-        // Recuperando contatos do Firebase
-        Preferencias preferencias = new Preferencias(CarteiraActivity.this);
-        String identificador = preferencias.getIdentificador();
+            // Listener que será notificado toda vez que houver mudança, para ser executado novamente
+            valueEventListenerCarteira = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // Lista para adicionar as carteiras
+                    List<Carteira> carteiras = new ArrayList<>();
 
-        firebase = ConfiguracaoFirebase.getFirebase().child("carteiras").child( identificador );
+                    // Limpar lista de carteira antes de buscar no Firebase
+                    carteiras.clear();
 
-        // Listener que será notificado toda vez que houver mudança
-        valueEventListenerCarteira = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Listas
-                List<Carteira> carteiras = new ArrayList<>();
+                    // Buscando as carteiras existentes no Firebase
+                    for (DataSnapshot dados : dataSnapshot.getChildren()) {
+                        // Pegando os dados do Firebase para serem salvos na lista
+                        Carteira carteiraFb = new Carteira();
+                        carteiraFb.setIdentificador(dados.getKey());
+                        carteiraFb.setDescricao((String) dados.child("descricao").getValue());
+                        carteiraFb.setChave_publica((String) dados.child("chave_publica").getValue());
+                        carteiraFb.setChave_privada((String) dados.child("chave_privada").getValue());
+                        // Salvando carteira na lista
+                        carteiras.add(carteiraFb);
+                    }
+                    // Caso não haja nenhuma carteira cadastrada irá mostra mensagem para o usuário
+                    if (carteiras.size() == 0) {
+                        Toast.makeText(context, "Nenhuma carteira cadastrada.", Toast.LENGTH_LONG).show();
+                    }
 
-                // Limpar lista de carteira antes de buscar no Firebase
-                carteiras.clear();
-
-                // Listar carteiras
-                for (DataSnapshot dados : dataSnapshot.getChildren()){
-                    Carteira carteiraFb = new Carteira();
-                    carteiraFb.setIdentificador( dados.getKey());
-                    carteiraFb.setDescricao((String) dados.child("descricao").getValue());
-                    carteiraFb.setChave_publica((String) dados.child("chave_publica").getValue());
-                    carteiraFb.setChave_privada((String) dados.child("chave_privada").getValue());
-                    carteiras.add ( carteiraFb );
-                    /*
-                    Carteira carteira = dados.getValue( Carteira.class );
-                    carteiras.add ( carteira );
-                    */
-                    Log.i("carteirasfb",carteiraFb.getIdentificador());
+                    // Passando a lista de carteiras para o adapter que mostrará as carteiras na tela
+                    carteiraAdpter = new CarteiraAdpter(context, carteiras);
+                    listaCarteiras.setAdapter(carteiraAdpter);
+                    // Notifica o adapter caso haja alguma alteração no firebase, para a lista ser atualizada
+                    carteiraAdpter.notifyDataSetChanged();
                 }
 
-                if (carteiras.size() == 0){
-                    Toast.makeText(context, "Nenhuma carteira cadastrada.", Toast.LENGTH_LONG).show();
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
                 }
+            };
+        } else{
+            Toast.makeText(context, "Sem conexão com a internet.", Toast.LENGTH_SHORT).show();
+        }
 
-                carteiraAdpter = new CarteiraAdpter(context, carteiras);
-                listaCarteiras.setAdapter(carteiraAdpter);
-                // carteiraFbAdapter = new CarteiraFbAdapter(CarteiraActivity.this, carteiras);
-                //carteiraFbAdapter.notifyDataSetChanged();
-                carteiraAdpter.notifyDataSetChanged();
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        };
-
-
+        // Consulta o saldo quando clicado na carteira
         listaCarteiras.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Verifica se há conexão com a internet
                 Boolean conexaoInternet = ConexaoInternet.verificaConexao(context);
                 if ( conexaoInternet == true) {
                     Carteira carteira = (Carteira) carteiraAdpter.getItem(position);
-
+                    // Método que faz a consulta no servidor
                     carteira.saldoUC(carteira, context);
                 } else {
                     Toast.makeText(context, "Sem conexão com a internet.", Toast.LENGTH_SHORT).show();
@@ -132,19 +130,16 @@ public class CarteiraActivity extends AppCompatActivity {
             }
         });
 
-
-
+        // Quando há um logo clica na carteira, chama essa função de exclusão
         listaCarteiras.setLongClickable(true);
         listaCarteiras.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Carteira carteira = (Carteira) carteiraAdpter.getItem(position);
-                Log.i("carteiraexclu",carteira.getIdentificador());
-                // Exclusão Firebase
+                // Exclusão da carteira no Firebase
                 confirmarExclusaoFB(carteira.getIdentificador(), carteira.getDescricao());
 
-
-                // Exclusao pelo SQLite
+                // Exclusao pelo SQLite - não utilizado mais
                 //confirmarExclusao(carteira.getId(),carteira.getDescricao());
                 return true;
             }
@@ -153,7 +148,6 @@ public class CarteiraActivity extends AppCompatActivity {
 
         // Botão de direciona para tela de cadastro de nova carteira
         botaoAddCarteira = findViewById(R.id.btAddCarteiraId);
-
         botaoAddCarteira.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,65 +158,15 @@ public class CarteiraActivity extends AppCompatActivity {
 
     }
 
-    private void atualizarListaCarteira (){
+    // Atualizar a lista de carteiras do SQLite, não utitilizado mais
+/*    private void atualizarListaCarteira (){
         List<Carteira> carteiraLista = carteiraDao.recuperarCarteira();
         carteiraAdpter = new CarteiraAdpter(context, carteiraLista);
         listaCarteiras.setAdapter(carteiraAdpter);
-    };
+    };*/
 
-/*
-   private void recuperarCarteiraFB(){
-
-        final ArrayList<Carteira> carteiras = null;
-
-        // Recuperar identificador usuário logado
-        Preferencias preferencias = new Preferencias(CarteiraActivity.this);
-        String identificador = preferencias.getIdentificador();
-
-        firebase = ConfiguracaoFirebase.getFirebase().child("carteiras").child( identificador );
-
-        // Listener para recuperar as carteiras a cada vez que forem alteradas
-        valueEventListenerCarteira = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Instânciar objetos
-                //carteiras = new ArrayList<>();
-                //List<Carteira> carteiraLista  = new ArrayList<>();
-
-                // Limpar a lista de carteiras, para evitar duplicidade
-                carteiras.clear();
-
-                // Listar carteiras
-                // dados irá receber o filhos do dataSnapshot que passamos acima na firebase, no caso pegará os filhos que possuem aquele identificador
-                for (DataSnapshot dados: dataSnapshot.getChildren()){
-                    //
-                    Carteira carteiraFB = dados.getValue( Carteira.class );
-                    carteiras.add( carteiraFB );
-
-                    Log.i("Log-carteiraFB", carteiraFB.toString());
-
-                }
-
-                // Notificar para o adapter que houve uma alteração
-                carteiraFbAdapter.notifyDataSetChanged();
-
-                //List<Carteira> carteiraLista = carteiras;
-                carteiraFbAdapter = new CarteiraFbAdapter(CarteiraActivity.this, carteiras);
-                Log.i("Log-Lista Carteira", carteiras.toString());
-                listaCarteiras.setAdapter(carteiraFbAdapter);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        };
-        firebase.addValueEventListener( valueEventListenerCarteira );
-    }
-*/
-
+    // Primeira mensagem perguntando se deseja excluir a carteita, caso sim, passará os dados para o método ExclusaoFB
     private void confirmarExclusaoFB (final String idCarteiraFb, final String descricao){
-
-
 
         AlertDialog.Builder msgBox = new AlertDialog.Builder(this);
         msgBox.setTitle("Remover carteira:");
@@ -245,6 +189,7 @@ public class CarteiraActivity extends AppCompatActivity {
         msgBox.show();
     }
 
+    // Mostra uma nova mensagem de confirmação, e se confirmado, deletará a carteira
     private void ExclusaoFB (final String idCarteiraFb, String descricao){
 
         AlertDialog.Builder msgBox = new AlertDialog.Builder(this);
@@ -274,6 +219,7 @@ public class CarteiraActivity extends AppCompatActivity {
         msgBox.show();
     }
 
+/* Os dois métodos abaixos são os mesmo que o acima, porém são para o SQLite, não utilizado mais
     private void confirmarExclusao (final long idExc, final String descricao){
         final long idCarteira = idExc;
 
@@ -319,29 +265,31 @@ public class CarteiraActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(context, "Carteira deletada com sucesso!", Toast.LENGTH_SHORT).show();
                 carteiraDao.removerCarteira(idCarteira);
-                //atualizarListaCarteira();
-                //recuperarCarteiraFB();
+                atualizarListaCarteira();
             }
         });
         msgBox.show();
     }
-
+*/
 
     @Override
     protected void onStart() {
         super.onStart();
+        // Era utilizado para atualizar a lista de carteira do SQLite
         //atualizarListaCarteira();
 
-        // método para iniciar a lista
+        // Método responsável para chama o listener, onde será feito a busca por carteiras no firebase
         firebase.addValueEventListener( valueEventListenerCarteira );
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        // Para o método listener que é responsável por ficar escutando modificações no firebase
         firebase.removeEventListener( valueEventListenerCarteira );
     }
 
+    // Criação do Menu na action bar, onde é possivel fazer logout, ir para outras telas
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -349,6 +297,7 @@ public class CarteiraActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    // Opções que foram configuradas para aparecer no menu, são acões para irem para outras telas, e fazer logout
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -362,17 +311,13 @@ public class CarteiraActivity extends AppCompatActivity {
                 startActivity(irHome);
                 finish();
                 break;
-            /*case R.id.bt_mcart_carteira:
-                Intent irCarteira = new Intent(CarteiraActivity.this,CarteiraActivity.class);
-                startActivity(irCarteira);
-                finish();
-                break; */
             case R.id.bt_mcart_transferencia:
                 Intent irTransferencia = new Intent(CarteiraActivity.this,TransferenciaActivity.class);
                 startActivity(irTransferencia);
                 finish();
                 break;
             case R.id.bt_mcart_sair:
+                // Desconecta o usuário atual do aplicativo
                 usuarioFirebase  = ConfiguracaoFirebase.getFirebaseAutenticacao();
                 usuarioFirebase.signOut();
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
