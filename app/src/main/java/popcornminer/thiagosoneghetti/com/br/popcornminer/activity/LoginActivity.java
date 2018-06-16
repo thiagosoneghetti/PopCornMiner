@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,14 +17,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.config.Firebase;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Base64Custom;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Preferencias;
@@ -98,7 +95,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void verificarSeUsuarioLogado(){
-        autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
+        autenticacao = Firebase.getFirebaseAutenticacao();
         //Verificar se usuário está logado, caso sim, vai direto para tela principal
         if ( autenticacao.getCurrentUser() != null){
             abrirTelaPrincipal();
@@ -108,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // Método que faz a validação do login
     private void validarLogin(){
-        autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
+        autenticacao = Firebase.getFirebaseAutenticacao();
         // Fazer Login pelo email e senha inseridos
         autenticacao.signInWithEmailAndPassword(usuario.getEmail(),usuario.getSenha())
         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
@@ -147,7 +144,7 @@ public class LoginActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    Toast.makeText(LoginActivity.this, ""+erroLogin, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, ""+erroLogin, Toast.LENGTH_LONG).show();
                 }
             }});
 
@@ -173,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
 
         String identificador = preferencias.getIdentificador();
         // Encontrando o usuário pelo seu identificador
-        firebase = ConfiguracaoFirebase.getFirebase().child("usuarios").child(identificador);
+        firebase = Firebase.getFirebaseDatabase().child("usuarios").child(identificador);
 
         firebase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

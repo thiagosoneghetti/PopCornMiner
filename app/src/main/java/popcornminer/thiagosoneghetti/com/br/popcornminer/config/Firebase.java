@@ -5,21 +5,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 // final - Para a classe não ser extendida
-public final class ConfiguracaoFirebase {
+public final class Firebase {
 
     // static - o valor do atributo é o mesmo, independente de quantas instancias forem criadas
-    private static DatabaseReference referenciaFirebase;
+    private static DatabaseReference referenciaDatabase;
     private static FirebaseAuth autenticacao;
 
     // Retornará a referencia do Firesabe
     // static - não precisará criar uma instância da classe, método poderá ser utilizado diretamente
-    public static DatabaseReference  getFirebase(){
+    public static DatabaseReference getFirebaseDatabase(){
         // Verifica se o reference já não foi criado anteriormente
-        if ( referenciaFirebase == null) {
-            referenciaFirebase = FirebaseDatabase.getInstance().getReference();
+        if ( referenciaDatabase == null) {
+            //Habilita persistência de dados offline
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
+            referenciaDatabase = FirebaseDatabase.getInstance().getReference();
         }
 
-        return referenciaFirebase;
+        return referenciaDatabase;
     };
 
     // Retornará o objeto do Firesabe que é responsável pela autenticação

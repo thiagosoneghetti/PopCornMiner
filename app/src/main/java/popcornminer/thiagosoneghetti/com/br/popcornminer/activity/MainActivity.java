@@ -13,12 +13,20 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Base64Custom;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.adapter.CarteiraAdpter;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.config.Firebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Preferencias;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference firebase;
     private Button botaoCarteira;
     private Button botaoTransferencia;
+    private ValueEventListener valueEventListenerCarteira;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +43,16 @@ public class MainActivity extends AppCompatActivity {
 
         // Configurações menu superior (ActionBar)
         ActionBar actionBar = getSupportActionBar();
-        //actionBar.setIcon(R.mipmap.ic_launcher_foreground); // Atribuir um ícone na actionbar
+        actionBar.setIcon(R.mipmap.ic_launcher_foreground); // Atribuir um ícone na actionbar
         actionBar.setDisplayShowHomeEnabled(true); // Habilitar o título da barra de ação
-        actionBar.setDisplayHomeAsUpEnabled(true); // Habilitar botão voltar
-        //actionBar.setTitle("Navegacao PopCornMiner");
+        //actionBar.setDisplayHomeAsUpEnabled(true); // Habilitar botão voltar
+        actionBar.setTitle("Menu PopCornMiner");
+
+        // Verificando se possui conexão com a internet, se não, informa para o usuário que está sem internet
+        Boolean conexaoInternet = ConexaoInternet.verificaConexao(this);
+        if ( conexaoInternet == false ) {
+            Toast.makeText(this, "NAVEGAÇÃO OFFLINE: sem conexão com a internet.", Toast.LENGTH_LONG).show();
+        }
 
         // Recuperando os elementos da tela pelo ID
         botaoCarteira = findViewById(R.id.btCarteiraId);
@@ -59,6 +74,57 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+    // Processos para recuperação das carteira no Firebase
+        Preferencias preferencias = new Preferencias(MainActivity.this);
+        String identificador = preferencias.getIdentificador();
+
+        //Recuperar instância Firebase no local informado : carteiras >> email em base64
+        // O que caminho que for configurado aqui, será armazenado no DataSnapshot abaixo
+        firebase = Firebase.getFirebaseDatabase().child("carteiras").child(identificador);
+
+        // Listener que será notificado toda vez que houver mudança, para ser executado novamente
+        valueEventListenerCarteira = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Lista para adicionar as carteiras
+                List<Carteira> carteiras = new ArrayList<>();
+
+                // Limpar lista de carteira antes de buscar no Firebase
+                carteiras.clear();
+
+                // Buscando as carteiras existentes no Firebase
+                for (DataSnapshot dados : dataSnapshot.getChildren()) {
+                    // Pegando os dados do Firebase para serem salvos na lista
+                    Carteira carteiraFb = new Carteira();
+                    carteiraFb.setIdentificador(dados.getKey());
+                    carteiraFb.setDescricao((String) dados.child("descricao").getValue());
+                    carteiraFb.setChave_publica((String) dados.child("chave_publica").getValue());
+                    carteiraFb.setChave_privada((String) dados.child("chave_privada").getValue());
+                    // Salvando carteira na lista
+                    carteiras.add(carteiraFb);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Método responsável para chama o listener, onde será feito a busca por carteiras no firebase
+        firebase.addValueEventListener(valueEventListenerCarteira);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Para o método listener que é responsável por ficar escutando modificações no firebase
+        firebase.removeEventListener( valueEventListenerCarteira );
     }
 
     // Criação do Menu na action bar, onde é possivel fazer logout, ir para outras telas
@@ -74,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.bt_mhome_sair:
                 // Desconecta o usuário atual do aplicativo
-                autenticacao  = ConfiguracaoFirebase.getFirebaseAutenticacao();
+                autenticacao  = Firebase.getFirebaseAutenticacao();
                 autenticacao.signOut();
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
                 Intent irLogin = new Intent(MainActivity.this,LoginActivity.class);

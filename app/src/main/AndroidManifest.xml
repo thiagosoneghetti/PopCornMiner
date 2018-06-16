@@ -3,6 +3,8 @@
     package="popcornminer.thiagosoneghetti.com.br.popcornminer">
     // Permissão para utilizar a internet
     <uses-permission android:name="android.permission.INTERNET" />
+    // Permissão para utilizar a camera
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />

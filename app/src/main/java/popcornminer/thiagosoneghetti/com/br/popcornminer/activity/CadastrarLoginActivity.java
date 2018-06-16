@@ -6,9 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -22,14 +20,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.config.Firebase;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Base64Custom;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Preferencias;
@@ -120,7 +117,7 @@ public class CadastrarLoginActivity extends AppCompatActivity {
     // Método responsável por salvar usuário no Firebase
     private void cadastrarUsuario(){
         // Recuperando instância de autenticação do firebase
-        autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
+        autenticacao = Firebase.getFirebaseAutenticacao();
 
         //Relização do Cadastro pelo e-mail e senha inseridos
         autenticacao.createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
@@ -181,7 +178,7 @@ public class CadastrarLoginActivity extends AppCompatActivity {
         String identificador = preferencias.getIdentificador();
 
         // Encontrando o usuário pelo seu identificador
-        firebase = ConfiguracaoFirebase.getFirebase().child("usuarios").child(identificador);
+        firebase = Firebase.getFirebaseDatabase().child("usuarios").child(identificador);
 
         firebase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

@@ -5,15 +5,11 @@ import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -26,9 +22,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import popcornminer.thiagosoneghetti.com.br.popcornminer.adapter.CarteiraAdpter;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.adapter.TransferenciaAdpter;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.config.Firebase;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Preferencias;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
@@ -51,7 +46,7 @@ public class TransferenciaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_transferencia);
 
         // Chamando o objeto do Firebase que é responsável pela autenticação
-        usuarioFirebase = ConfiguracaoFirebase.getFirebaseAutenticacao();
+        usuarioFirebase = Firebase.getFirebaseAutenticacao();
 
         // Configurações menu superior (ActionBar)
         ActionBar actionBar = getSupportActionBar();
@@ -59,63 +54,55 @@ public class TransferenciaActivity extends AppCompatActivity {
         actionBar.setDisplayShowHomeEnabled(true); // Habilitar o título da barra de ação
         actionBar.setDisplayHomeAsUpEnabled(true); // Habilitar botão voltar
 
-
         //carteiraDao = new CarteiraDao(this);  // Não utilziado, somente no SQLite
         listaCarteiras = findViewById(R.id.listTransferenciaId);
         context = this;
 
     // Processos para recuperação das carteira no Firebase
-        // Verificando se possui conexão com a internet, se sim busca lista de contatos, se não informa para o usuário que está sem internet
-        Boolean conexaoInternet = ConexaoInternet.verificaConexao(context);
-        if ( conexaoInternet == true ) {
-            Preferencias preferencias = new Preferencias(TransferenciaActivity.this);
-            String identificador = preferencias.getIdentificador();
+        Preferencias preferencias = new Preferencias(TransferenciaActivity.this);
+        String identificador = preferencias.getIdentificador();
 
-            //Recuperar instância Firebase no local informado : carteiras >> email em base64
-            // O que caminho que for configurado aqui, será armazenado no DataSnapshot abaixo
-            firebase = ConfiguracaoFirebase.getFirebase().child("carteiras").child( identificador );
+        //Recuperar instância Firebase no local informado : carteiras >> email em base64
+        // O que caminho que for configurado aqui, será armazenado no DataSnapshot abaixo
+        firebase = Firebase.getFirebaseDatabase().child("carteiras").child( identificador );
 
-            // Listener que será notificado toda vez que houver mudança, para ser executado novamente
-            valueEventListenerCarteira = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // Lista para adicionar as carteiras
-                    List<Carteira> carteiras = new ArrayList<>();
+        // Listener que será notificado toda vez que houver mudança, para ser executado novamente
+        valueEventListenerCarteira = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Lista para adicionar as carteiras
+                List<Carteira> carteiras = new ArrayList<>();
 
-                    // Limpar lista de carteira antes de buscar no Firebase
-                    carteiras.clear();
+                // Limpar lista de carteira antes de buscar no Firebase
+                carteiras.clear();
 
-                    // Buscando as carteiras existentes no Firebase
-                    for (DataSnapshot dados : dataSnapshot.getChildren()){
-                        // Pegando os dados do Firebase para serem salvos na lista
-                        Carteira carteiraFb = new Carteira();
-                        carteiraFb.setIdentificador( dados.getKey());
-                        carteiraFb.setDescricao((String) dados.child("descricao").getValue());
-                        carteiraFb.setChave_publica((String) dados.child("chave_publica").getValue());
-                        carteiraFb.setChave_privada((String) dados.child("chave_privada").getValue());
-                        // Salvando carteira na lista
-                        carteiras.add ( carteiraFb );
-                    }
-                    // Caso não haja nenhuma carteira cadastrada irá mostra mensagem para o usuário
-                    if (carteiras.size() == 0){
-                        Toast.makeText(context, "Nenhuma carteira cadastrada.", Toast.LENGTH_LONG).show();
-                    }
-
-                    // Passando a lista de carteiras para o adapter que mostrará as carteiras na tela
-                    transferenciaAdpter = new TransferenciaAdpter(context, carteiras);
-                    listaCarteiras.setAdapter(transferenciaAdpter);
-                    // Notifica o adapter caso haja alguma alteração no firebase, para a lista ser atualizada
-                    transferenciaAdpter.notifyDataSetChanged();
+                // Buscando as carteiras existentes no Firebase
+                for (DataSnapshot dados : dataSnapshot.getChildren()){
+                    // Pegando os dados do Firebase para serem salvos na lista
+                    Carteira carteiraFb = new Carteira();
+                    carteiraFb.setIdentificador( dados.getKey());
+                    carteiraFb.setDescricao((String) dados.child("descricao").getValue());
+                    carteiraFb.setChave_publica((String) dados.child("chave_publica").getValue());
+                    carteiraFb.setChave_privada((String) dados.child("chave_privada").getValue());
+                    // Salvando carteira na lista
+                    carteiras.add ( carteiraFb );
+                }
+                // Caso não haja nenhuma carteira cadastrada irá mostra mensagem para o usuário
+                if (carteiras.size() == 0){
+                    Toast.makeText(context, "Nenhuma carteira cadastrada.", Toast.LENGTH_LONG).show();
                 }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            };
-        } else{
-            Toast.makeText(context, "Sem conexão com a internet.", Toast.LENGTH_SHORT).show();
-        }
+                // Passando a lista de carteiras para o adapter que mostrará as carteiras na tela
+                transferenciaAdpter = new TransferenciaAdpter(context, carteiras);
+                listaCarteiras.setAdapter(transferenciaAdpter);
+                // Notifica o adapter caso haja alguma alteração no firebase, para a lista ser atualizada
+                transferenciaAdpter.notifyDataSetChanged();
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
 
         // Ao clicar em uma carteira da lista, é passada a carteira selecionada para a outra view
         listaCarteiras.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -146,7 +133,7 @@ public class TransferenciaActivity extends AppCompatActivity {
         //atualizarListaCarteira();
 
         // Método responsável para chama o listener, onde será feito a busca por carteiras no firebase
-        firebase.addValueEventListener( valueEventListenerCarteira );
+        firebase.addValueEventListener(valueEventListenerCarteira);
     }
 
     @Override
@@ -182,7 +169,7 @@ public class TransferenciaActivity extends AppCompatActivity {
                 break;
             case R.id.bt_mtransf_sair:
                 // Desconecta o usuário atual do aplicativo
-                usuarioFirebase  = ConfiguracaoFirebase.getFirebaseAutenticacao();
+                usuarioFirebase  = Firebase.getFirebaseAutenticacao();
                 usuarioFirebase.signOut();
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
                 Intent irLogin = new Intent(TransferenciaActivity.this,LoginActivity.class);

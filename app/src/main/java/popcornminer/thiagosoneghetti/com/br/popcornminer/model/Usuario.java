@@ -3,7 +3,7 @@ package popcornminer.thiagosoneghetti.com.br.popcornminer.model;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 
-import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.config.Firebase;
 
 public class Usuario {
 
@@ -17,7 +17,7 @@ public class Usuario {
 
     // Responsável por adicionar um novo usuário no banco de dados do firebase (não é criação de usuário)
     public void salvar(){
-        DatabaseReference referenciaDatabase = ConfiguracaoFirebase.getFirebase();
+        DatabaseReference referenciaDatabase = Firebase.getFirebaseDatabase();
         // Adicionando um usuário a referencia do Firebase, em seguida o ID, e depois passando
         referenciaDatabase.child("usuarios").child( getId() ).setValue( this );
     }

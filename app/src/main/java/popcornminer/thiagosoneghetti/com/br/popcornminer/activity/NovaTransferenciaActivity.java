@@ -21,7 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import popcornminer.thiagosoneghetti.com.br.popcornminer.config.ConfiguracaoFirebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.config.Firebase;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
@@ -53,22 +53,6 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
         editCPublicaDest = findViewById(R.id.editCPublicaDestinoId);
         editValorTranf = findViewById(R.id.editValorTransfId);
         editDescricaoCarteira = findViewById(R.id.editDescricaoTransfId);
-        btnScan = findViewById(R.id.btnScan);
-        final Activity activity = this;
-
-        // Código responsável pelo Scaner de QRcode
-        btnScan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                IntentIntegrator intentIntegrator = new IntentIntegrator(activity);
-                intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-                intentIntegrator.setPrompt("Camera Scan");
-                intentIntegrator.setCameraId(0);
-                intentIntegrator.initiateScan();
-            }
-        });
-
-
 
         // Recuperando os dados que foram passados na Activity anterior
         final Intent intent = getIntent();
@@ -111,25 +95,43 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
             }
         });
 
+        // Código responsável pelo Scaner de QRcode
+        btnScan = findViewById(R.id.btnScan);
+
+        btnScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IntentIntegrator intentIntegrator = new IntentIntegrator(NovaTransferenciaActivity.this);
+                intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+                intentIntegrator.setPrompt("Scanear QR Code do destinatário");
+                intentIntegrator.setCameraId(0);
+                intentIntegrator.initiateScan();
+            }
+        });
+
+
     }
 
-    // Método responsável por pegar os dados scaneador no QR code
+    // Método responsável por pegar os dados scaneado no QR code
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if(result != null){
             if(result.getContents() != null){
-                alert(result.getContents());
+                //alert(result.getContents());
+                alert("Leitura QR CODE realizada!");
+                // Passando o dado scaneado para o EditText da chave publica destino
+                editCPublicaDest.setText(result.getContents());
             }else {
-                alert("Scan cancelado");
+                alert("Leitura QR CODE cancelada!");
             }
         } else {
-            super.onActivityResult(requestCode, resultCode, data);
+            super.onActivityResult(requestCode, resultCode, intent);
         }
     }
-    // Método responsável por exivir a mensagem do Scan QR code
+    // Método responsável por exibir a mensagem do Scan QR code
     private void alert (String msg){
-        Toast.makeText(getApplicationContext(),msg, Toast.LENGTH_LONG);
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
     }
 
     // Pede para usuário confirmar a transferencia, caso sim realiza a transferencia, se não, é abortada a transferencia
@@ -188,7 +190,7 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
                 break;
             case R.id.bt_mtransf_sair:
                 // Desconecta o usuário atual do aplicativo
-                autenticacao  = ConfiguracaoFirebase.getFirebaseAutenticacao();
+                autenticacao  = Firebase.getFirebaseAutenticacao();
                 autenticacao.signOut();
                 Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
                 Intent irLogin = new Intent(NovaTransferenciaActivity.this,LoginActivity.class);
