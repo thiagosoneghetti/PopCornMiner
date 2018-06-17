@@ -18,6 +18,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.zxing.client.android.Intents;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+
+import org.json.JSONObject;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.config.Firebase;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
@@ -34,6 +39,7 @@ public class AddCarteiraActivity extends AppCompatActivity {
     private EditText eChavePrivada;
     private EditText eDescricao;
     private Button btSalvarCarteira;
+    private Button btnScanAddCart;
     private CarteiraDao carteiraDao;
     private Context context;
 
@@ -99,7 +105,52 @@ public class AddCarteiraActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // Código responsável pelo Scaner de QRcode
+        btnScanAddCart = findViewById(R.id.btnScanAddCart);
+
+        btnScanAddCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IntentIntegrator intentIntegrator = new IntentIntegrator(AddCarteiraActivity.this);
+                intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+                intentIntegrator.setPrompt("Scanear QR Code da Carteira"); // Mensagem que aparece na parte inferior da tela
+                intentIntegrator.setOrientationLocked(false);  // Habilitar rotação da tela de acordo com a orientação
+                intentIntegrator.setCameraId(0); // Camera transeira
+                intentIntegrator.initiateScan(); // Inicializa o Scan
+            }
+        });
     }
+
+    // Método responsável por pegar os dados scaneado no QR code
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        if(result != null){
+            if(result.getContents() != null){
+                String resultado = result.getContents();
+                // Se o resultado conter 160 caracteres, fará a separação das chaves (QR code padrão PopCornMiner)
+                if(resultado.length() == 160){
+                    eChavePublica.setText(resultado.substring(13,79));
+                    eChavePrivada.setText(resultado.substring(94,158));
+                // Se não, irá jogar para os dois campos o resultado do QR Code lido
+                } else {
+                    eChavePublica.setText(resultado);
+                    eChavePrivada.setText(resultado);
+                }
+
+                Toast.makeText(context, "Leitura QR CODE realizada!", Toast.LENGTH_LONG).show();
+                // Passando o dado scaneado para o EditText da chave publica destino
+                //editCPublicaDest.setText(result.getContents());
+            }else {
+                Toast.makeText(context, "Leitura QR CODE cancelada!", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, intent);
+        }
+    }
+
+
     // Salvar a carteira de forma Offiline, somente no dispositivo, não sendo utilizado no momento
 /*    public void salvar(String chavepublica, String chaveprivada, String descricao){
 
@@ -119,7 +170,6 @@ public class AddCarteiraActivity extends AppCompatActivity {
 
      public void salvarFB(String chavepublica, String chaveprivada, String descricao){
 
-         //
          final Carteira carteiraFB = new Carteira(chavepublica, chaveprivada, descricao);
 
          //Recuperar o usuário pelo ID Base 64

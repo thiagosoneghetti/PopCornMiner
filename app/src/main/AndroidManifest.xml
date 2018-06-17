@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="popcornminer.thiagosoneghetti.com.br.popcornminer">
-    // Permissão para utilizar a internet
+    <!-- Permissão para utilizar a internet-->
     <uses-permission android:name="android.permission.INTERNET" />
-    // Permissão para utilizar a camera
+    <!-- Permissão para utilizar a camera-->
     <uses-permission android:name="android.permission.CAMERA" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
@@ -18,41 +18,36 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-
-        <activity android:name=".activity.LoginActivity"
+        <activity
+            android:name=".activity.LoginActivity"
             android:label="PopCornMiner">
-                <intent-filter>
-                    <action android:name="android.intent.action.MAIN" />
-                    <category android:name="android.intent.category.LAUNCHER" />
-                </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity android:name=".activity.CadastrarLoginActivity"
-            android:label="@string/title_activity_cadastrarlogin">
-        </activity>
+            android:label="@string/title_activity_cadastrarlogin" />
 
         <activity android:name=".activity.MainActivity"
-            android:label="@string/title_activity_menu">
-        </activity>
+            android:label="@string/title_activity_menu"/>
 
         <activity android:name=".activity.CarteiraActivity"
-            android:label="@string/title_activity_carteira">
-        </activity>
+            android:label="@string/title_activity_carteira"/>
 
-        <activity
-            android:name=".activity.AddCarteiraActivity"
-            android:label="@string/title_activity_addcarteira">
-        </activity>
+        <activity android:name=".activity.AddCarteiraActivity"
+            android:label="@string/title_activity_addcarteira"/>
 
         <activity android:name=".activity.TransferenciaActivity"
-            android:label="@string/title_activity_transferencia">
-        </activity>
+            android:label="@string/title_activity_transferencia"/>
 
         <activity android:name=".activity.NovaTransferenciaActivity"
-            android:label="@string/title_activity_novatransferencia">
-        </activity>
+            android:label="@string/title_activity_novatransferencia"/>
 
+        <activity android:name=".activity.GeradorQrCode"
+            android:label="@string/title_activity_geradorqrcoe"/>
     </application>
 
 </manifest>

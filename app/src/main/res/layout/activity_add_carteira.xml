@@ -15,7 +15,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:text="@string/descricao"
-        android:textSize="24sp"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
         android:textStyle="bold" />
 
     <EditText
@@ -24,7 +25,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
-        android:layout_marginTop="5dp"
         android:ems="10"
         android:hint="@string/digite_a_descricao"
         android:inputType="textPersonName"
@@ -35,29 +35,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="@string/chave_privada"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
-    <EditText
-        android:id="@+id/editChavePrivadaId"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
-        android:layout_marginTop="5dp"
-        android:ems="10"
-        android:hint="@string/digite_sua_chave_privada"
-        android:inputType="textPersonName"
-        android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
         android:text="@string/chave_publica"
-        android:textSize="24sp"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
         android:textStyle="bold" />
 
     <EditText
@@ -66,19 +46,46 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
-        android:layout_marginTop="5dp"
         android:ems="10"
         android:hint="@string/digite_sua_chave_publica"
         android:inputType="textPersonName"
         android:textSize="18sp" />
 
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="@string/chave_privada"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/editChavePrivadaId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:ems="10"
+        android:hint="@string/digite_sua_chave_privada"
+        android:inputType="textPersonName"
+        android:textSize="18sp" />
+
     <Button
         android:id="@+id/btSalvarCarteiraId"
-        android:layout_width="259dp"
-        android:layout_height="67dp"
+        android:layout_width="@dimen/form_botao"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="25dp"
         android:gravity="center_vertical|center"
         android:text="@string/adicionar"
-        android:textSize="24sp" />
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btnScanAddCart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Scan" />
 </LinearLayout>

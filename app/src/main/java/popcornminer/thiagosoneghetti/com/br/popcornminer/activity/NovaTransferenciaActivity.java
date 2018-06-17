@@ -1,6 +1,5 @@
 package popcornminer.thiagosoneghetti.com.br.popcornminer.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,7 +33,8 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
     private EditText editCPublicaDest;
     private EditText editValorTranf;
     private Context context;
-    private Button btnScan;
+    private Button btnScanQR;
+    private Button btnGerarQR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,17 +95,32 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
             }
         });
 
-        // Código responsável pelo Scaner de QRcode
-        btnScan = findViewById(R.id.btnScan);
+        // Código responsável por ir para Activity que gera o QR Code
+        btnGerarQR = findViewById(R.id.btnGerarQR);
 
-        btnScan.setOnClickListener(new View.OnClickListener() {
+        btnGerarQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                IntentIntegrator intentIntegrator = new IntentIntegrator(NovaTransferenciaActivity.this);
-                intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-                intentIntegrator.setPrompt("Scanear QR Code do destinatário");
-                intentIntegrator.setCameraId(0);
-                intentIntegrator.initiateScan();
+                // Passando os dados da carteira para outra Activity para geração do QR Code
+                Intent intentQR = new Intent(NovaTransferenciaActivity.this, GeradorQrCode.class);
+                intentQR.putExtra("carteira",carteira);
+                startActivity(intentQR);
+            }
+        });
+
+
+        // Código responsável pelo Scaner de QRcode
+        btnScanQR = findViewById(R.id.btnScanQR);
+
+        btnScanQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            IntentIntegrator intentIntegrator = new IntentIntegrator(NovaTransferenciaActivity.this);
+            intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES); // Formato do código
+            intentIntegrator.setPrompt("Scanear QR Code do destinatário"); // Mensagem que aparece na parte inferior da tela
+            intentIntegrator.setOrientationLocked(false); //Habilitar rotação da tela de acordo com a orientação
+            intentIntegrator.setCameraId(0); // Camera transeira
+            intentIntegrator.initiateScan(); // Inicializa o Scan
             }
         });
 
@@ -118,20 +133,15 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if(result != null){
             if(result.getContents() != null){
-                //alert(result.getContents());
-                alert("Leitura QR CODE realizada!");
+                Toast.makeText(context, "Leitura QR CODE realizada!", Toast.LENGTH_LONG).show();
                 // Passando o dado scaneado para o EditText da chave publica destino
                 editCPublicaDest.setText(result.getContents());
             }else {
-                alert("Leitura QR CODE cancelada!");
+                Toast.makeText(context, "Leitura QR CODE cancelada!", Toast.LENGTH_LONG).show();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, intent);
         }
-    }
-    // Método responsável por exibir a mensagem do Scan QR code
-    private void alert (String msg){
-        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
     }
 
     // Pede para usuário confirmar a transferencia, caso sim realiza a transferencia, se não, é abortada a transferencia
