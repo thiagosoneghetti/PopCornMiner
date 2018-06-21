@@ -3,6 +3,8 @@ package popcornminer.thiagosoneghetti.com.br.popcornminer.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
+
 public class Preferencias {
     private Context contexto;
     private SharedPreferences preferences;
@@ -27,4 +29,5 @@ public class Preferencias {
     public String getIdentificador() {
         return preferences.getString(CHAVE_IDENTIFICADOR, null);
     }
+
 }

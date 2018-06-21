@@ -1,10 +1,12 @@
 package popcornminer.thiagosoneghetti.com.br.popcornminer.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -102,21 +104,11 @@ public class TransferenciaActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
+
         };
 
-        // Ao clicar em uma carteira da lista, é passada a carteira selecionada para a outra view
-        listaCarteiras.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Carteira carteira = (Carteira) transferenciaAdpter.getItem(position);
-            // Vai para outra tela levando as informações da carteira selecionada
-            Intent intent = new Intent(TransferenciaActivity.this, NovaTransferenciaActivity.class);
-            intent.putExtra("carteira", carteira);
-            startActivity(intent);
-            }
-        });
-
     }
+
 
     // Atualizar a lista de carteiras do SQLite, não utitilizado mais
 /*    private void atualizarListaTransferencia (){

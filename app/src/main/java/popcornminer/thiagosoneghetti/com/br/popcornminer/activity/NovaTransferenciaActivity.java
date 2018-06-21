@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -94,7 +95,7 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
                 }
             }
         });
-
+/*
         // Código responsável por ir para Activity que gera o QR Code
         btnGerarQR = findViewById(R.id.btnGerarQR);
 
@@ -107,7 +108,7 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
                 startActivity(intentQR);
             }
         });
-
+*/
 
         // Código responsável pelo Scaner de QRcode
         btnScanQR = findViewById(R.id.btnScanQR);

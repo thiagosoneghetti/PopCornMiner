@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,53 +7,95 @@
 
     <ImageView
         android:id="@+id/imageViewListaTransferencia"
-        android:layout_width="71dp"
-        android:layout_height="62dp"
+        android:layout_width="92dp"
+        android:layout_height="85dp"
         android:layout_marginBottom="10dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginStart="6dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/ic_transferencia_uc"
-        android:contentDescription="TODO"
-        android:hapticFeedbackEnabled="false"
-        android:padding="10dp"
+        android:background="@drawable/ic_transf_ucl_coin"
+        android:contentDescription="@string/wallet"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-        //app:srcCompat="@drawable/iconecarteira"
-         tools:ignore="MissingConstraints" />
+        app:layout_constraintVertical_bias="0.014" />
+
 
     <TextView
         android:id="@+id/itListaTransferenciaDescricao"
-        android:layout_width="296dp"
-        android:layout_height="39dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginLeft="13dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="16dp"
         android:gravity="center_vertical"
-        android:paddingLeft="10dp"
-        android:text="Descrição"
+        android:paddingEnd="1sp"
+        android:paddingStart="8dp"
+        android:text="@string/descri_o"
         android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.111"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/imageViewListaTransferencia"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/itListaTransferenciaChavePublica"
-        android:layout_width="0dp"
-        android:layout_height="22dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="5dp"
-        android:gravity="center_vertical"
-        android:paddingLeft="1dp"
+        android:layout_width="364dp"
+        android:layout_height="19dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginRight="64dp"
+        android:layout_marginTop="84dp"
+        android:gravity="center"
         android:text="@string/chave_publica"
-        android:textSize="8sp"
+        android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageViewListaTransferencia"
-        app:layout_constraintTop_toBottomOf="@+id/itListaTransferenciaDescricao"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/itListaTransferenciaDescricao"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/btSaldoLT"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="144dp"
+        android:layout_marginRight="144dp"
+        android:layout_marginTop="32dp"
+        android:contentDescription="@string/saldo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/itListaTransferenciaDescricao"
+        app:srcCompat="@drawable/ic_money_bag_256px"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/btTransferirLT"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="32dp"
+        android:contentDescription="@string/excluir"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/itListaTransferenciaDescricao"
+        app:srcCompat="@drawable/ic_delete_256px"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/btGerarQrCodeLT"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="80dp"
+        android:layout_marginRight="80dp"
+        android:layout_marginTop="32dp"
+        android:contentDescription="@string/editar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/itListaTransferenciaDescricao"
+        app:srcCompat="@drawable/ic_editor_256px"
         tools:ignore="MissingConstraints" />
 
 </android.support.constraint.ConstraintLayout>

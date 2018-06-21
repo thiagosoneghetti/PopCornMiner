@@ -46,6 +46,12 @@
     <!-- ID do Aplicativo do Facebook, prefixado por 'fb'. Ativa as guias personalizadas do Chrome. -->
     <string name="facebook_login_protocol_scheme" translatable="false">fb1801531709890334</string>
     <string name="nao_tem_conta_cadastre">Não tem conta? Cadastre-se</string>
+    <string name="wallet">Wallet</string>
+    <string name="excluir">Excluir</string>
+    <string name="editar">Editar</string>
+    <string name="descri_o">Descrição</string>
+    <string name="saldo">Saldo</string>
+    <string name="imagemTransferencia">imagemTransferencia</string>
 
 
 </resources>

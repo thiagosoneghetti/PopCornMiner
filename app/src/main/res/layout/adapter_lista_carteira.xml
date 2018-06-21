@@ -6,49 +6,99 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/imageViewListaCarteira"
-        android:layout_width="71dp"
-        android:layout_height="62dp"
+        android:id="@+id/imageViewListaTransferencia"
+        android:layout_width="97dp"
+        android:layout_height="85dp"
         android:layout_marginBottom="10dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginStart="6dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/ic_carteira_uc"
-        android:contentDescription="TODO"
+        android:background="@drawable/ic_wallet"
+        android:contentDescription="@string/wallet"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-    //app:srcCompat="@drawable/iconecarteira"
-    tools:ignore="MissingConstraints" />
+        app:layout_constraintVertical_bias="0.014" />
+
 
     <TextView
-        android:id="@+id/itListaCarteiraDescricao"
-        android:layout_width="300dp"
-        android:layout_height="39dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:id="@+id/itListaTransferenciaDescricao"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginRight="6dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:gravity="center_vertical"
-        android:text="Descrição"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:paddingEnd="1sp"
+        android:paddingLeft="8dp"
+        android:paddingRight="1sp"
+        android:paddingStart="8dp"
+        android:text="@string/descri_o"
+        android:textColor="@color/fui_linkColor"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageViewListaCarteira"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/imageViewListaTransferencia"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/itListaCarteiraChavePublica"
         android:layout_width="0dp"
-        android:layout_height="27dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="5dp"
-        android:gravity="center_vertical"
+        android:layout_height="19dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="84dp"
+        android:gravity="center"
         android:text="@string/chave_publica"
-        android:textSize="8sp"
+        android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageViewListaCarteira"
-        app:layout_constraintTop_toBottomOf="@+id/itListaCarteiraDescricao"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/itListaTransferenciaDescricao"
         tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/btSaldoLC"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="144dp"
+        android:layout_marginRight="144dp"
+        android:layout_marginTop="32dp"
+        android:contentDescription="@string/saldo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/itListaTransferenciaDescricao"
+        app:srcCompat="@drawable/ic_money_bag_256px"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/btDeletarLC"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="32dp"
+        android:contentDescription="@string/excluir"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/itListaTransferenciaDescricao"
+        app:srcCompat="@drawable/ic_delete_256px"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/btEditarLC"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="80dp"
+        android:layout_marginRight="80dp"
+        android:layout_marginTop="32dp"
+        android:contentDescription="@string/editar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/itListaTransferenciaDescricao"
+        app:srcCompat="@drawable/ic_editor_256px"
+        tools:ignore="MissingConstraints" />
+
 </android.support.constraint.ConstraintLayout>

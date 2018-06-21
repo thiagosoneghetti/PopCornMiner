@@ -1,19 +1,29 @@
 package popcornminer.thiagosoneghetti.com.br.popcornminer.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.List;
+
+import popcornminer.thiagosoneghetti.com.br.popcornminer.config.Firebase;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Preferencias;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
 
 public class CarteiraAdpter extends BaseAdapter {
     //http://blog.alura.com.br/personalizando-uma-listview-no-android/
-
+    private DatabaseReference firebase;
     List<Carteira> carteiras;
     Context context;
 
@@ -41,19 +51,104 @@ public class CarteiraAdpter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View view = LayoutInflater.from(context).inflate(R.layout.adapter_lista_carteira,null);
-        Carteira carteira = carteiras.get(position);
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        final View view = LayoutInflater.from(context).inflate(R.layout.adapter_lista_carteira,null);
+        final Carteira carteira = carteiras.get(position);
 
         // Pegando elementos da View pelo ID
-        TextView txtDescricao = (TextView) view.findViewById(R.id.itListaCarteiraDescricao);
-        TextView txtChavePublica = (TextView) view.findViewById(R.id.itListaCarteiraChavePublica);
+        TextView txtDescricao = view.findViewById(R.id.itListaTransferenciaDescricao);
+        TextView txtChavePublica = view.findViewById(R.id.itListaCarteiraChavePublica);
+        ImageView btnSaldo = view.findViewById(R.id.btSaldoLC);
+        ImageView btnDeletar = view.findViewById(R.id.btDeletarLC);
+        ImageView btnEditar = view.findViewById(R.id.btEditarLC);
 
         // Inserindo os dados do elemento na view
         txtDescricao.setText(carteira.getDescricao());
         txtChavePublica.setText(carteira.getChave_publica());
 
+        // Ao clicar no botão chama a chama a função de consulta de saldo
+        btnSaldo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Verifica se há conexão com a internet
+                Boolean conexaoInternet = ConexaoInternet.verificaConexao(context);
+                if ( conexaoInternet == true) {
+                    // Método que faz a consulta no servidor
+                    carteira.saldoUC(carteira, context);
+                } else {
+                    Toast.makeText(context, "Sem conexão com a internet.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Ao clicar no botão chama a função de exclusão
+        btnDeletar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Carteira carteira = carteiras.get(position);
+                // Exclusão da carteira no Firebase
+                confirmarExclusaoFB(carteira.getIdentificador(), carteira.getDescricao());
+
+                // Exclusao pelo SQLite - não utilizado mais
+                //confirmarExclusao(carteira.getId(),carteira.getDescricao());
+            }
+        });
+
         return view;
+    }
+
+    // Primeira mensagem perguntando se deseja excluir a carteita, caso sim, passará os dados para o método ExclusaoFB
+    private void confirmarExclusaoFB (final String idCarteiraFb, final String descricao){
+
+        AlertDialog.Builder msgBox = new AlertDialog.Builder(context);
+        msgBox.setTitle("Remover carteira:");
+        msgBox.setIcon(android.R.drawable.ic_menu_delete);
+        msgBox.setMessage("Deseja excluir a carteira \""+ descricao +"\"?");
+        msgBox.setCancelable(false); // Não deixar clicar fora da caixa para sair
+        msgBox.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(context, "Exclusão cancelada!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        msgBox.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ExclusaoFB(idCarteiraFb, descricao);
+            }
+        });
+        msgBox.show();
+    }
+
+    // Mostra uma nova mensagem de confirmação, e se confirmado, deletará a carteira
+    private void ExclusaoFB (final String idCarteiraFb, String descricao){
+
+        AlertDialog.Builder msgBox = new AlertDialog.Builder(context);
+        msgBox.setTitle("Confirmação de exclusão:");
+        msgBox.setIcon(android.R.drawable.ic_menu_delete);
+        msgBox.setMessage("AVISO: A carteira \""+ descricao +"\" será deletada permanentemente.");
+        msgBox.setCancelable(false); // Não deixar clicar fora da caixa para sair
+        msgBox.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(context, "Exclusão cancelada!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        msgBox.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(context, "Carteira deletada com sucesso!", Toast.LENGTH_SHORT).show();
+                Preferencias preferencias = new Preferencias(context);
+                String identificador = preferencias.getIdentificador();
+
+                firebase = Firebase.getFirebaseDatabase().child("carteiras").child( identificador ).child(idCarteiraFb);
+                firebase.removeValue();
+
+            }
+        });
+        msgBox.show();
     }
 
 }

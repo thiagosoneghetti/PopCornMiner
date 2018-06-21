@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.adapter.CarteiraAdpter;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.config.Firebase;
@@ -106,7 +107,7 @@ public class CarteiraActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
             }
         };
-
+/*
         // Consulta o saldo quando clicado na carteira
         listaCarteiras.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -123,7 +124,7 @@ public class CarteiraActivity extends AppCompatActivity {
             }
         });
 
-        // Quando há um logo clica na carteira, chama essa função de exclusão
+        // Quando há um longo clica na carteira, chama essa função de exclusão
         listaCarteiras.setLongClickable(true);
         listaCarteiras.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -138,7 +139,7 @@ public class CarteiraActivity extends AppCompatActivity {
             }
         });
 
-
+*/
         // Botão de direciona para tela de cadastro de nova carteira
         botaoAddCarteira = findViewById(R.id.btAddCarteiraId);
         botaoAddCarteira.setOnClickListener(new View.OnClickListener() {
@@ -158,8 +159,9 @@ public class CarteiraActivity extends AppCompatActivity {
         listaCarteiras.setAdapter(carteiraAdpter);
     };*/
 
+
     // Primeira mensagem perguntando se deseja excluir a carteita, caso sim, passará os dados para o método ExclusaoFB
-    private void confirmarExclusaoFB (final String idCarteiraFb, final String descricao){
+    public void confirmarExclusaoFB (final String idCarteiraFb, final String descricao){
 
         AlertDialog.Builder msgBox = new AlertDialog.Builder(this);
         msgBox.setTitle("Remover carteira:");
@@ -183,7 +185,7 @@ public class CarteiraActivity extends AppCompatActivity {
     }
 
     // Mostra uma nova mensagem de confirmação, e se confirmado, deletará a carteira
-    private void ExclusaoFB (final String idCarteiraFb, String descricao){
+    public void ExclusaoFB (final String idCarteiraFb, String descricao){
 
         AlertDialog.Builder msgBox = new AlertDialog.Builder(this);
         msgBox.setTitle("Confirmação de exclusão:");
