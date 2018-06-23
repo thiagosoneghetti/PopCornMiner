@@ -1,28 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_vertical|center_horizontal"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentTop="true"
+    android:layout_gravity="top|center_vertical"
+    android:layout_margin="15dp"
+    android:baselineAligned="false"
+    android:foregroundGravity="center_vertical|center_horizontal"
+    android:gravity="center"
+    android:orientation="vertical"
     tools:context=".activity.MainActivity">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="@dimen/logo_width"
+        android:layout_height="195dp"
+        android:layout_gravity="center"
+        android:contentDescription="@string/logo"
+        app:srcCompat="@drawable/ic_uclcoin" />
 
     <Button
         android:id="@+id/btCarteiraId"
-        android:layout_width="198dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="147dp"
-        android:text="@string/botao_carteira" />
+        style="@android:style/Widget.DeviceDefault.Button.Inset"
+        android:layout_width="230dp"
+        android:layout_height="110dp"
+        android:layout_marginTop="20dp"
+        android:drawableTop="@mipmap/ic_carteiraw"
+        android:gravity="center"
+        android:text="@string/botao_carteira"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/btTransferenciaId"
-        android:layout_width="198dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="175dp"
-        android:text="@string/botao_transferencia" />
+        style="@android:style/Widget.DeviceDefault.Button.Inset"
+        android:layout_width="230dp"
+        android:layout_height="110dp"
+        android:layout_marginTop="10dp"
+        android:drawableTop="@mipmap/ic_transfw"
+        android:text="@string/botao_transferencia"
+        android:textStyle="bold" />
 
-</RelativeLayout>
+</LinearLayout>

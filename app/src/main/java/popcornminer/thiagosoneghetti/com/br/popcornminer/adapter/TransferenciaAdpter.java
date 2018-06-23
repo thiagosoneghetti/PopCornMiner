@@ -1,5 +1,7 @@
 package popcornminer.thiagosoneghetti.com.br.popcornminer.adapter;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -21,8 +23,7 @@ import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
 
 public class TransferenciaAdpter extends BaseAdapter {
     //http://blog.alura.com.br/personalizando-uma-listview-no-android/
-
-    TransferenciaActivity transferenciaActivity;
+    ClipboardManager clipboardManager;
     List<Carteira> carteiras;
     Context context;
 
@@ -60,12 +61,26 @@ public class TransferenciaAdpter extends BaseAdapter {
         ImageView btnSaldo = view.findViewById(R.id.btSaldoLT);
         ImageView btnTransferir = view.findViewById(R.id.btTransferirLT);
         ImageView btnGerarQR = view.findViewById(R.id.btGerarQrCodeLT);
+        ImageView btnCopiarQR = view.findViewById(R.id.btCopiarLT);
 
         // Inserindo os dados do elemento na view
         txtDescricao.setText(carteira.getDescricao());
         txtChavePublica.setText(carteira.getChave_publica());
 
-        // Ao clicar no botão chama a chama a função de consulta de saldo
+        // Ao clicar no botão chama a é copiado a chave pubblica da carteira
+        btnCopiarQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clipboardManager = (ClipboardManager)view.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clipData;
+                clipData = ClipData.newPlainText("chavepublica",carteira.getChave_publica());
+                clipboardManager.setPrimaryClip(clipData);
+                Toast.makeText(context, "Chave pública copiada.", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        // Ao clicar no botão chama a função de consulta de saldo
         btnSaldo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,7 +95,7 @@ public class TransferenciaAdpter extends BaseAdapter {
             }
         });
 
-        // Ao clicar no botão chama é passado a carteira para a activity de transferencia
+        // Ao clicar no botão é passado a carteira para a activity de transferencia
         btnTransferir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

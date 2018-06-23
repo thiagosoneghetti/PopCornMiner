@@ -4,37 +4,47 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.config.Firebase;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
+import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Preferencias;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
 
 public class NovaTransferenciaActivity extends AppCompatActivity {
-    private FirebaseAuth autenticacao;
+    private FirebaseAuth usuarioFirebase;
     private Carteira carteira;
     private Button botaoTransferir;
     private TextView editDescricaoCarteira;
     private EditText editCPublicaDest;
     private EditText editValorTranf;
     private Context context;
-    private Button btnScanQR;
+    private ImageView btnScanQR;
     private Button btnGerarQR;
 
     @Override
@@ -42,13 +52,19 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nova_transferencia);
 
+        // Chamando o objeto do Firebase que é responsável pela autenticação
+        usuarioFirebase = Firebase.getFirebaseAutenticacao();
+        // Pegando o contexto atual
+        context = this;
+        // Verificando se o usuário está logado, caso não, voltará para tela de inicio
+        verificarSeUsuarioLogado();
+
         // Configurações menu superior (ActionBar)
         ActionBar actionBar = getSupportActionBar();
         //actionBar.setIcon(R.mipmap.ic_launcher_foreground); // Atribuir um ícone na actionbar
         actionBar.setDisplayShowHomeEnabled(true); // Habilitar o título da barra de ação
         actionBar.setDisplayHomeAsUpEnabled(true); // Habilitar botão voltar
 
-        context = this;
         // Recuperando os elementos da tela pelo ID
         botaoTransferir = findViewById(R.id.btTransferirId);
         editCPublicaDest = findViewById(R.id.editCPublicaDestinoId);
@@ -125,7 +141,6 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
     // Método responsável por pegar os dados scaneado no QR code
@@ -145,16 +160,34 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
         }
     }
 
+    private void verificarSeUsuarioLogado(){
+        usuarioFirebase = Firebase.getFirebaseAutenticacao();
+        //Verificar se usuário está logado, caso não, volta para tela de login
+        if ( usuarioFirebase.getCurrentUser() == null){
+            Intent intent = new Intent(context, LoginActivity.class);
+            startActivity(intent);
+            // Fecha todas activitys que estavam na fila
+            finishAffinity();
+        }
+    }
+
     // Pede para usuário confirmar a transferencia, caso sim realiza a transferencia, se não, é abortada a transferencia
     private void confirmarTransferencia (Carteira carteira, String chave_publica_destino, Float valor ){
         final Carteira carteiraDestino = carteira;
         final String chavePublicaDestino = chave_publica_destino;
         final Float valorDestino = valor;
 
-        AlertDialog.Builder msgBox = new AlertDialog.Builder(this);
+        AlertDialog.Builder msgBox = new AlertDialog.Builder(context);
         msgBox.setTitle("Confirmação de Transação:");
         msgBox.setIcon(android.R.drawable.ic_menu_send);
         msgBox.setMessage("Transferir UC "+ valorDestino +" para \""+ chavePublicaDestino +"\"?");
+        final EditText confirmarSenha = new EditText(context);
+        confirmarSenha.setGravity(Gravity.CENTER);
+        confirmarSenha.setHint("Digite sua senha");
+        confirmarSenha.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        confirmarSenha.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        msgBox.setView(confirmarSenha);
+        confirmarSenha.setWidth(60);
         msgBox.setCancelable(false); // Não deixar clicar fora da caixa para sair
         msgBox.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             @Override
@@ -166,21 +199,60 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
         msgBox.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-            // Chama o método que é responsável por realizar a transferencia
-            carteiraDestino.transferenciaUC(carteiraDestino, chavePublicaDestino, valorDestino, NovaTransferenciaActivity.this);
-            // Volta para a tela de transferencias
-            Intent intent = new Intent(NovaTransferenciaActivity.this,TransferenciaActivity.class);
-            startActivity(intent);
+                usuarioFirebase = Firebase.getFirebaseAutenticacao();
+                FirebaseUser usuario = usuarioFirebase.getCurrentUser();
+
+                if(usuarioFirebase.getCurrentUser() != null) {
+                    if (confirmarSenha.getText().toString().equals("")) {
+                        Toast.makeText(context, "Informe sua senha.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Passando email e senha para validação
+                        AuthCredential credencial = EmailAuthProvider
+                                .getCredential(usuario.getEmail(), confirmarSenha.getText().toString());
+
+                        usuario.reauthenticate(credencial)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+
+                                            // Chama o método que é responsável por realizar a transferencia
+                                            carteiraDestino.transferenciaUC(carteiraDestino, chavePublicaDestino, valorDestino, NovaTransferenciaActivity.this);
+                                            // Volta para a tela de transferencias
+                                            Intent intent = new Intent(NovaTransferenciaActivity.this,TransferenciaActivity.class);
+                                            startActivity(intent);
+                                            finish();
+
+                                        } else {
+                                            Toast.makeText(context, "Senha Incorreta.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                    }
+                }else{
+                    Toast.makeText(context, "Nenhum usuário autenticado.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         msgBox.show();
     }
+
+
+
+
 
     // Criação do Menu na action bar, onde é possivel fazer logout, ir para outras telas
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_transferencia,menu);
+        if(usuarioFirebase.getCurrentUser() != null) {
+            // Mudando o texto do botão sair para mostar Sair: Nome do usuário
+            // Mudando o texto do botão sair para mostar Sair: Nome do usuário
+            MenuItem menuItem = menu.findItem(R.id.bt_mtransf_sair);
+            menuItem.setTitle("Sair: " + usuarioFirebase.getCurrentUser().getDisplayName());
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
     // Opções que foram configuradas para aparecer no menu, são acões para irem para outras telas, e fazer logout
@@ -190,22 +262,26 @@ public class NovaTransferenciaActivity extends AppCompatActivity {
             case android.R.id.home:
                 Intent btVoltar = new Intent(NovaTransferenciaActivity.this,TransferenciaActivity.class);
                 startActivity(btVoltar);
+                finish();
                 break;
             case R.id.bt_mtransf_home:
                 Intent irHome = new Intent(NovaTransferenciaActivity.this,MainActivity.class);
                 startActivity(irHome);
+                finish();
                 break;
             case R.id.bt_mtransf_carteira:
                 Intent irCarteira = new Intent(NovaTransferenciaActivity.this,CarteiraActivity.class);
                 startActivity(irCarteira);
+                finish();
                 break;
             case R.id.bt_mtransf_sair:
                 // Desconecta o usuário atual do aplicativo
-                autenticacao  = Firebase.getFirebaseAutenticacao();
-                autenticacao.signOut();
-                Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
-                Intent irLogin = new Intent(NovaTransferenciaActivity.this,LoginActivity.class);
+                Toast.makeText(context, "Usuário " + usuarioFirebase.getCurrentUser().getDisplayName() +" desconectado.", Toast.LENGTH_SHORT).show();
+                usuarioFirebase.signOut();
+                Intent irLogin = new Intent(context, LoginActivity.class);
                 startActivity(irLogin);
+                // Fecha todas activitys que estavam na fila
+                finishAffinity();
                 break;
             default:
                 super.onOptionsItemSelected(item);

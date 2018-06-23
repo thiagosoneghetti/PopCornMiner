@@ -1,6 +1,7 @@
 package popcornminer.thiagosoneghetti.com.br.popcornminer.activity;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.R;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.adapter.CarteiraAdpter;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.config.Firebase;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Preferencias;
@@ -30,23 +30,30 @@ import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FirebaseAuth autenticacao;
+    private FirebaseAuth usuarioFirebase;
     private DatabaseReference firebase;
     private Button botaoCarteira;
     private Button botaoTransferencia;
     private ValueEventListener valueEventListenerCarteira;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Chamando o objeto do Firebase que é responsável pela autenticação
+        usuarioFirebase = Firebase.getFirebaseAutenticacao();
+        // Pegando o contexto atual
+        context = this;
+        // Verificando se o usuário está logado, caso não, voltará para tela de inicio
+        verificarSeUsuarioLogado();
+
         // Configurações menu superior (ActionBar)
         ActionBar actionBar = getSupportActionBar();
         actionBar.setIcon(R.mipmap.ic_launcher_foreground); // Atribuir um ícone na actionbar
         actionBar.setDisplayShowHomeEnabled(true); // Habilitar o título da barra de ação
         //actionBar.setDisplayHomeAsUpEnabled(true); // Habilitar botão voltar
-        actionBar.setTitle("Menu PopCornMiner");
 
         // Verificando se possui conexão com a internet, se não, informa para o usuário que está sem internet
         Boolean conexaoInternet = ConexaoInternet.verificaConexao(this);
@@ -113,6 +120,17 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
+    private void verificarSeUsuarioLogado(){
+        usuarioFirebase = Firebase.getFirebaseAutenticacao();
+        //Verificar se usuário está logado, caso não, volta para tela de login
+        if ( usuarioFirebase.getCurrentUser() == null){
+            Intent intent = new Intent(context, LoginActivity.class);
+            startActivity(intent);
+            // Fecha todas activitys que estavam na fila
+            finishAffinity();
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -132,6 +150,13 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_home,menu);
+        if(usuarioFirebase.getCurrentUser() != null) {
+            // Mudando o texto do botão sair para mostar Sair: Nome do usuário
+            // Mudando o texto do botão sair para mostar Sair: Nome do usuário
+            MenuItem menuItem = menu.findItem(R.id.bt_mhome_sair);
+            menuItem.setTitle("Sair: " + usuarioFirebase.getCurrentUser().getDisplayName());
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
     // Opções que foram configuradas para aparecer no menu, são acões para irem para outras telas, e fazer logout
@@ -140,12 +165,12 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.bt_mhome_sair:
                 // Desconecta o usuário atual do aplicativo
-                autenticacao  = Firebase.getFirebaseAutenticacao();
-                autenticacao.signOut();
-                Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
-                Intent irLogin = new Intent(MainActivity.this,LoginActivity.class);
+                Toast.makeText(context, "Usuário " + usuarioFirebase.getCurrentUser().getDisplayName() +" desconectado.", Toast.LENGTH_SHORT).show();
+                usuarioFirebase.signOut();
+                Intent irLogin = new Intent(context, LoginActivity.class);
                 startActivity(irLogin);
-                finish();
+                // Fecha todas activitys que estavam na fila
+                finishAffinity();
                 break;
             default:
                 super.onOptionsItemSelected(item);

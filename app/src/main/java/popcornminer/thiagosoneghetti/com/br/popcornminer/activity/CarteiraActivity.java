@@ -12,11 +12,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,11 +24,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import popcornminer.thiagosoneghetti.com.br.popcornminer.adapter.CarteiraAdpter;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.config.Firebase;
-import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.ConexaoInternet;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.helper.Preferencias;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
 import popcornminer.thiagosoneghetti.com.br.popcornminer.model.CarteiraDao;
@@ -51,6 +49,10 @@ public class CarteiraActivity extends AppCompatActivity {
 
         // Chamando o objeto do Firebase que é responsável pela autenticação
         usuarioFirebase = Firebase.getFirebaseAutenticacao();
+        // Pegando o contexto atual
+        context = this;
+        // Verificando se o usuário está logado, caso não, voltará para tela de inicio
+        verificarSeUsuarioLogado();
 
         // Configurações menu superior (ActionBar)
         ActionBar actionBar = getSupportActionBar();
@@ -60,7 +62,6 @@ public class CarteiraActivity extends AppCompatActivity {
 
         //carteiraDao = new CarteiraDao(this);  // Não utilziado, somente no SQLite
         listaCarteiras = findViewById(R.id.listCarteirasId);
-        context = this;
 
     // Processos para recuperação das carteira no Firebase
         Preferencias preferencias = new Preferencias(CarteiraActivity.this);
@@ -145,7 +146,7 @@ public class CarteiraActivity extends AppCompatActivity {
         botaoAddCarteira.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CarteiraActivity.this, AddCarteiraActivity.class);
+                Intent intent = new Intent(CarteiraActivity.this, CadastrarCarteiraActivity.class);
                 startActivity(intent);
             }
         });
@@ -159,6 +160,17 @@ public class CarteiraActivity extends AppCompatActivity {
         listaCarteiras.setAdapter(carteiraAdpter);
     };*/
 
+
+    private void verificarSeUsuarioLogado(){
+        usuarioFirebase = Firebase.getFirebaseAutenticacao();
+        //Verificar se usuário está logado, caso não, volta para tela de login
+        if ( usuarioFirebase.getCurrentUser() == null){
+            Intent intent = new Intent(context, LoginActivity.class);
+            startActivity(intent);
+            // Fecha todas activitys que estavam na fila
+            finishAffinity();
+        }
+    }
 
     // Primeira mensagem perguntando se deseja excluir a carteita, caso sim, passará os dados para o método ExclusaoFB
     public void confirmarExclusaoFB (final String idCarteiraFb, final String descricao){
@@ -289,6 +301,13 @@ public class CarteiraActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_carteira,menu);
+        if(usuarioFirebase.getCurrentUser() != null) {
+            // Mudando o texto do botão sair para mostar Sair: Nome do usuário
+            // Mudando o texto do botão sair para mostar Sair: Nome do usuário
+            MenuItem menuItem = menu.findItem(R.id.bt_mcart_sair);
+            menuItem.setTitle("Sair: " + usuarioFirebase.getCurrentUser().getDisplayName());
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -297,26 +316,25 @@ public class CarteiraActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent btVoltar = new Intent(CarteiraActivity.this,MainActivity.class);
+                Intent btVoltar = new Intent(context, MainActivity.class);
                 startActivity(btVoltar);
                 finish();
                 break;
             case R.id.bt_mcart_home:
-                Intent irHome = new Intent(CarteiraActivity.this,MainActivity.class);
+                Intent irHome = new Intent(context, MainActivity.class);
                 startActivity(irHome);
                 finish();
                 break;
             case R.id.bt_mcart_transferencia:
-                Intent irTransferencia = new Intent(CarteiraActivity.this,TransferenciaActivity.class);
+                Intent irTransferencia = new Intent(context, TransferenciaActivity.class);
                 startActivity(irTransferencia);
                 finish();
                 break;
             case R.id.bt_mcart_sair:
                 // Desconecta o usuário atual do aplicativo
-                usuarioFirebase  = Firebase.getFirebaseAutenticacao();
+                Toast.makeText(context, "Usuário " + usuarioFirebase.getCurrentUser().getDisplayName() +" desconectado.", Toast.LENGTH_SHORT).show();
                 usuarioFirebase.signOut();
-                Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
-                Intent irLogin = new Intent(CarteiraActivity.this,LoginActivity.class);
+                Intent irLogin = new Intent(context, LoginActivity.class);
                 startActivity(irLogin);
                 finish();
                 break;

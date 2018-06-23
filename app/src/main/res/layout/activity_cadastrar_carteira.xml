@@ -7,7 +7,7 @@
     android:layout_margin="15dp"
     android:gravity="center_vertical|center_horizontal"
     android:orientation="vertical"
-    tools:context=".activity.AddCarteiraActivity">
+    tools:context=".activity.CadastrarCarteiraActivity">
 
     <TextView
         android:id="@+id/textView"
@@ -72,20 +72,21 @@
         android:inputType="textPersonName"
         android:textSize="18sp" />
 
+    <ImageView
+        android:id="@+id/btnScanAddCart"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="15dp"
+        app:srcCompat="@drawable/ic_camera256px" />
+
     <Button
         android:id="@+id/btSalvarCarteiraId"
         android:layout_width="@dimen/form_botao"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="15dp"
         android:gravity="center_vertical|center"
         android:text="@string/adicionar"
         android:textSize="16sp" />
 
-    <Button
-        android:id="@+id/btnScanAddCart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="Scan" />
 </LinearLayout>

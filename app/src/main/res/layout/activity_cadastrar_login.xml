@@ -12,7 +12,7 @@
     <ImageView
         android:id="@+id/logoCadastroLogin"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/ic_cadastro_usuario_heigth"
+        android:layout_height="@dimen/ic_cadastro_usuario_height"
         android:layout_gravity="center"
         android:contentDescription="@string/logo"
         app:srcCompat="@drawable/ic_cadastro_usuario" />

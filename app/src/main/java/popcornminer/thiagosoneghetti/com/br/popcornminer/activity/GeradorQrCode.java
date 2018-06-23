@@ -1,5 +1,6 @@
 package popcornminer.thiagosoneghetti.com.br.popcornminer.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.app.ActionBar;
@@ -27,17 +28,25 @@ import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Carteira;
 
 public class GeradorQrCode extends AppCompatActivity {
 
-    private FirebaseAuth autenticacao;
+    private FirebaseAuth usuarioFirebase;
     private Carteira carteira;
     private TextView descricaoCarteira;
     private ImageView imagemQrCode;
     private Button btnVoltar;
+    private Context context;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gerador_qr_code);
+
+        // Chamando o objeto do Firebase que é responsável pela autenticação
+        usuarioFirebase = Firebase.getFirebaseAutenticacao();
+        // Pegando o contexto atual
+        context = this;
+        // Verificando se o usuário está logado, caso não, voltará para tela de inicio
+        verificarSeUsuarioLogado();
 
         // Configurações menu superior (ActionBar)
         ActionBar actionBar = getSupportActionBar();
@@ -69,6 +78,7 @@ public class GeradorQrCode extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intentTransf = new Intent(GeradorQrCode.this, TransferenciaActivity.class);
                 startActivity(intentTransf);
+                finish();
             }
         });
 
@@ -96,12 +106,30 @@ public class GeradorQrCode extends AppCompatActivity {
 
     }
 
+    private void verificarSeUsuarioLogado(){
+        usuarioFirebase = Firebase.getFirebaseAutenticacao();
+        //Verificar se usuário está logado, caso não, volta para tela de login
+        if ( usuarioFirebase.getCurrentUser() == null){
+            Intent intent = new Intent(context, LoginActivity.class);
+            startActivity(intent);
+            // Fecha todas activitys que estavam na fila
+            finishAffinity();
+        }
+    }
+
 
     // Criação do Menu na action bar, onde é possivel fazer logout, ir para outras telas
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_transferencia,menu);
+        if(usuarioFirebase.getCurrentUser() != null) {
+            // Mudando o texto do botão sair para mostar Sair: Nome do usuário
+            // Mudando o texto do botão sair para mostar Sair: Nome do usuário
+            MenuItem menuItem = menu.findItem(R.id.bt_mtransf_sair);
+            menuItem.setTitle("Sair: " + usuarioFirebase.getCurrentUser().getDisplayName());
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
     // Opções que foram configuradas para aparecer no menu, são acões para irem para outras telas, e fazer logout
@@ -111,22 +139,26 @@ public class GeradorQrCode extends AppCompatActivity {
             case android.R.id.home:
                 Intent btVoltar = new Intent(GeradorQrCode.this,TransferenciaActivity.class);
                 startActivity(btVoltar);
+                finish();
                 break;
             case R.id.bt_mtransf_home:
                 Intent irHome = new Intent(GeradorQrCode.this,MainActivity.class);
                 startActivity(irHome);
+                finish();
                 break;
             case R.id.bt_mtransf_carteira:
                 Intent irCarteira = new Intent(GeradorQrCode.this,CarteiraActivity.class);
                 startActivity(irCarteira);
+                finish();
                 break;
             case R.id.bt_mtransf_sair:
                 // Desconecta o usuário atual do aplicativo
-                autenticacao  = Firebase.getFirebaseAutenticacao();
-                autenticacao.signOut();
-                Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
-                Intent irLogin = new Intent(GeradorQrCode.this,LoginActivity.class);
+                Toast.makeText(context, "Usuário " + usuarioFirebase.getCurrentUser().getDisplayName() +" desconectado.", Toast.LENGTH_SHORT).show();
+                usuarioFirebase.signOut();
+                Intent irLogin = new Intent(context, LoginActivity.class);
                 startActivity(irLogin);
+                // Fecha todas activitys que estavam na fila
+                finishAffinity();
                 break;
             default:
                 super.onOptionsItemSelected(item);

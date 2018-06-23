@@ -49,6 +49,10 @@ public class TransferenciaActivity extends AppCompatActivity {
 
         // Chamando o objeto do Firebase que é responsável pela autenticação
         usuarioFirebase = Firebase.getFirebaseAutenticacao();
+        // Pegando o contexto atual
+        context = this;
+        // Verificando se o usuário está logado, caso não, voltará para tela de inicio
+        verificarSeUsuarioLogado();
 
         // Configurações menu superior (ActionBar)
         ActionBar actionBar = getSupportActionBar();
@@ -58,7 +62,6 @@ public class TransferenciaActivity extends AppCompatActivity {
 
         //carteiraDao = new CarteiraDao(this);  // Não utilziado, somente no SQLite
         listaCarteiras = findViewById(R.id.listTransferenciaId);
-        context = this;
 
     // Processos para recuperação das carteira no Firebase
         Preferencias preferencias = new Preferencias(TransferenciaActivity.this);
@@ -109,6 +112,16 @@ public class TransferenciaActivity extends AppCompatActivity {
 
     }
 
+    private void verificarSeUsuarioLogado(){
+        usuarioFirebase = Firebase.getFirebaseAutenticacao();
+        //Verificar se usuário está logado, caso não, volta para tela de login
+        if ( usuarioFirebase.getCurrentUser() == null){
+            Intent intent = new Intent(context, LoginActivity.class);
+            startActivity(intent);
+            // Fecha todas activitys que estavam na fila
+            finishAffinity();
+        }
+    }
 
     // Atualizar a lista de carteiras do SQLite, não utitilizado mais
 /*    private void atualizarListaTransferencia (){
@@ -140,6 +153,12 @@ public class TransferenciaActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_transferencia,menu);
+        if(usuarioFirebase.getCurrentUser() != null) {
+            // Mudando o texto do botão sair para mostar Sair: Nome do usuário
+            // Mudando o texto do botão sair para mostar Sair: Nome do usuário
+            MenuItem menuItem = menu.findItem(R.id.bt_mtransf_sair);
+            menuItem.setTitle("Sair: " + usuarioFirebase.getCurrentUser().getDisplayName());
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -150,22 +169,26 @@ public class TransferenciaActivity extends AppCompatActivity {
             case android.R.id.home:
                 Intent btVoltar = new Intent(TransferenciaActivity.this,MainActivity.class);
                 startActivity(btVoltar);
+                finish();
                 break;
             case R.id.bt_mtransf_home:
                 Intent irHome = new Intent(TransferenciaActivity.this,MainActivity.class);
                 startActivity(irHome);
+                finish();
                 break;
             case R.id.bt_mtransf_carteira:
                 Intent irCarteira = new Intent(TransferenciaActivity.this,CarteiraActivity.class);
                 startActivity(irCarteira);
+                finish();
                 break;
             case R.id.bt_mtransf_sair:
                 // Desconecta o usuário atual do aplicativo
-                usuarioFirebase  = Firebase.getFirebaseAutenticacao();
+                Toast.makeText(context, "Usuário " + usuarioFirebase.getCurrentUser().getDisplayName() +" desconectado.", Toast.LENGTH_SHORT).show();
                 usuarioFirebase.signOut();
-                Toast.makeText(this, "Usuário desconectado", Toast.LENGTH_SHORT).show();
-                Intent irLogin = new Intent(TransferenciaActivity.this,LoginActivity.class);
+                Intent irLogin = new Intent(context, LoginActivity.class);
                 startActivity(irLogin);
+                // Fecha todas activitys que estavam na fila
+                finishAffinity();
                 break;
             default:
                 super.onOptionsItemSelected(item);

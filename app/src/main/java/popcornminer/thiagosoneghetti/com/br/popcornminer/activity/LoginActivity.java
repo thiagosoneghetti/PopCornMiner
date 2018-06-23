@@ -1,5 +1,6 @@
 package popcornminer.thiagosoneghetti.com.br.popcornminer.activity;
 
+import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.flags.Flag;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -31,9 +33,10 @@ import popcornminer.thiagosoneghetti.com.br.popcornminer.model.Usuario;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private FirebaseAuth autenticacao;
+    private FirebaseAuth usuarioFirebase;
     private Button botaoLogin;
     private TextView botaoActivityCadastrar;
+    private TextView botaoResetSenha;
     private EditText email;
     private EditText senha;
     private Usuario usuario;
@@ -45,13 +48,17 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Método que verifica se usuário ainda está logado, caso sim, ele não precisará inserir login e senha novamente
+        // Chamando o objeto do Firebase que é responsável pela autenticação
+        usuarioFirebase = Firebase.getFirebaseAutenticacao();
+        // Pegando o contexto atual
+        context = this;
+        // Verificando se o usuário está logado, caso não, voltará para tela de inicio
         verificarSeUsuarioLogado();
 
-        context = this;
         // Recuperando os elementos da tela pelo ID
         botaoLogin = findViewById(R.id.btLogin);
         botaoActivityCadastrar = findViewById(R.id.btActivityCadastrar);
+        botaoResetSenha = findViewById(R.id.btActivityResetSenha);
         email = findViewById(R.id.editEmailLogin);
         senha = findViewById(R.id.editSenhaLogin);
 
@@ -60,6 +67,14 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 abrirCadastrarUsuario();
+            }
+        });
+
+        //Ir para página de resetar senha
+        botaoResetSenha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                abrirResetSenha();
             }
         });
 
@@ -95,9 +110,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void verificarSeUsuarioLogado(){
-        autenticacao = Firebase.getFirebaseAutenticacao();
-        //Verificar se usuário está logado, caso sim, vai direto para tela principal
-        if ( autenticacao.getCurrentUser() != null){
+        usuarioFirebase = Firebase.getFirebaseAutenticacao();
+        //Verificar se usuário está logado, e se o seu e-mail já foi confirmado, caso sim, vai direto para tela principal
+        if ( usuarioFirebase.getCurrentUser() != null && usuarioFirebase.getCurrentUser().isEmailVerified()){
             abrirTelaPrincipal();
             finish();
         }
@@ -105,29 +120,32 @@ public class LoginActivity extends AppCompatActivity {
 
     // Método que faz a validação do login
     private void validarLogin(){
-        autenticacao = Firebase.getFirebaseAutenticacao();
+        usuarioFirebase = Firebase.getFirebaseAutenticacao();
+
         // Fazer Login pelo email e senha inseridos
-        autenticacao.signInWithEmailAndPassword(usuario.getEmail(),usuario.getSenha())
+        usuarioFirebase.signInWithEmailAndPassword(usuario.getEmail(),usuario.getSenha())
         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 // verificando se usuário faz login
-
                 if (task.isSuccessful()){
+                    if (usuarioFirebase.getCurrentUser().isEmailVerified()){
+                        // Convertendo o e-mail do usuário para Base 64 para gerar ID
+                        String indentificadorUsuario = Base64Custom.codificarBase64( usuario.getEmail() );
+                        usuario.setId( indentificadorUsuario );
 
-                    // Convertendo o e-mail do usuário para Base 64 para gerar ID
-                    String indentificadorUsuario = Base64Custom.codificarBase64( usuario.getEmail() );
-                    usuario.setId( indentificadorUsuario );
+                        // Salvando nao SharedPreferences o ID base 64 gerado pelo e-mail
+                        // Convertendo e=mail para base 64, que será nosso ID único
+                        Preferencias preferencias  = new Preferencias(context);
+                        preferencias.salvarDados(indentificadorUsuario);
 
-                    // Salvando nao SharedPreferences o ID base 64 gerado pelo e-mail
-                    // Convertendo e=mail para base 64, que será nosso ID único
-                    Preferencias preferencias  = new Preferencias(context);
-                    preferencias.salvarDados(indentificadorUsuario);
-
-                    // Abre a pagina inicial do aplicativo
-                    abrirTelaPrincipal();
-                    // Mostra mensagem de boas vindas com o nome do usuário
-                    mensagemBemVindo();
+                        // Abre a pagina inicial do aplicativo
+                        abrirTelaPrincipal();
+                        // Mostra mensagem de boas vindas com o nome do usuário
+                        mensagemBemVindo();}
+                    else {
+                        Toast.makeText(context, "Verificação de e-mail pendente.", Toast.LENGTH_SHORT).show();
+                    }
 
                 }else{
                     // Tratamento de excessões
@@ -144,7 +162,7 @@ public class LoginActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    Toast.makeText(LoginActivity.this, ""+erroLogin, Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, ""+erroLogin, Toast.LENGTH_LONG).show();
                 }
             }});
 
@@ -160,7 +178,12 @@ public class LoginActivity extends AppCompatActivity {
     private void abrirCadastrarUsuario (){
         Intent intent = new Intent(LoginActivity.this,CadastrarLoginActivity.class);
         startActivity(intent);
-        finish();
+    }
+
+    // metodo que vai para tela de recuperação de senha
+    private void abrirResetSenha (){
+        Intent intent = new Intent(LoginActivity.this,ResetSenhaActivity.class);
+        startActivity(intent);
     }
 
     // Metodo para mostrar mensagem de boas vindas com nome do usuário
@@ -188,5 +211,4 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
-
 }

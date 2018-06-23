@@ -20,6 +20,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,7 +44,6 @@ public class CadastrarLoginActivity extends AppCompatActivity {
     private EditText editConfSenha;
     private Usuario usuario;
     private Context context;
-    private DatabaseReference firebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,7 @@ public class CadastrarLoginActivity extends AppCompatActivity {
 
         // Configurações menu superior (ActionBar)
         ActionBar actionBar = getSupportActionBar();
-        //actionBar.setIcon(R.mipmap.ic_launcher_foreground); // Atribuir um ícone na actionbar
+        actionBar.setIcon(R.mipmap.ic_launcher_foreground); // Atribuir um ícone na actionbar
         actionBar.setDisplayShowHomeEnabled(true); // Habilitar o título da barra de ação
         actionBar.setDisplayHomeAsUpEnabled(true); // Habilitar botão voltar
 
@@ -99,7 +100,7 @@ public class CadastrarLoginActivity extends AppCompatActivity {
                               usuario.setSenha( senha );
 
                               // Método responsável por salvar usuário no Firebase
-                              cadastrarUsuario();
+                              cadastrarUsuario(usuario);
 
                           } else {
                               // Informa para o usuário que as senhas não confere, e limpa os campos de senha
@@ -115,7 +116,7 @@ public class CadastrarLoginActivity extends AppCompatActivity {
         });
     }
     // Método responsável por salvar usuário no Firebase
-    private void cadastrarUsuario(){
+    private void cadastrarUsuario(final Usuario usuario){
         // Recuperando instância de autenticação do firebase
         autenticacao = Firebase.getFirebaseAutenticacao();
 
@@ -126,6 +127,15 @@ public class CadastrarLoginActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                 // verificando se o usuário foi criado com sucesso
                 if (task.isSuccessful()){
+
+                    // Fazendo o request dos campos a serem alterados, e passando nova informação
+                    UserProfileChangeRequest atualizarPerfil = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(usuario.getNome()).build();
+                    // Atualizando o perfil do usuário
+                    autenticacao.getCurrentUser().updateProfile(atualizarPerfil);
+
+                    // Envia e-mail de verificação
+                    autenticacao.getCurrentUser().sendEmailVerification();
 
                     // Convertendo o e-mail do usuário para Base 64 para gerar ID
                     String indentificadorUsuario = Base64Custom.codificarBase64( usuario.getEmail() );
@@ -139,7 +149,7 @@ public class CadastrarLoginActivity extends AppCompatActivity {
                     // Método responsável por salvar os dados do usuário no Firebase
                     usuario.salvar();
 
-                    abrirTelaPrincipal();
+                    voltarTelaLogin();
 
                     }else{
                         // Tratamento de excessões
@@ -162,38 +172,13 @@ public class CadastrarLoginActivity extends AppCompatActivity {
             });
 
     };
-    // ir para tela de principal
-    private void abrirTelaPrincipal (){
-        mensagemBemVindo();
-        Intent intent = new Intent(context, MainActivity.class);
+    // Voltar para tela de login e pedir confirmação de e-mail
+    private void voltarTelaLogin (){
+        Intent intent = new Intent(context, LoginActivity.class);
         startActivity(intent);
+        Toast.makeText(context, "Confirmação de e-mail: Verifique sua caixa de entrada.", Toast.LENGTH_SHORT).show();
         //Encerrando Activity de cadastro
         finish();
-    }
-
-    // Mostra mensagem que usuário foi criado com sucesso e bem vindo com o nome do usuário
-    public void mensagemBemVindo(){
-        // Buscando o identificador do usuário atual para pesquisa no firebase
-        Preferencias preferencias = new Preferencias(CadastrarLoginActivity.this);
-        String identificador = preferencias.getIdentificador();
-
-        // Encontrando o usuário pelo seu identificador
-        firebase = Firebase.getFirebaseDatabase().child("usuarios").child(identificador);
-
-        firebase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Usuário é instanciado, pegado seu nome para mostrar na tela
-                Usuario usuario = dataSnapshot.getValue( Usuario.class );
-                Toast.makeText(CadastrarLoginActivity.this, "Seja Bem-Vindo, "+usuario.getNome()+"! Usuário cadastrado com sucesso.", Toast.LENGTH_LONG).show();
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
     // Criação do Menu na action bar, onde é possivel fazer logout, ir para outras telas
@@ -209,7 +194,8 @@ public class CadastrarLoginActivity extends AppCompatActivity {
                 // Botão voltar, caso usuário queira voltar para tela de login
                 Intent btVoltar = new Intent(context, LoginActivity.class);
                 startActivity(btVoltar);
-                finish();
+                // Fecha todas activitys que estavam na fila
+                finishAffinity();
                 break;
             default:
                 super.onOptionsItemSelected(item);

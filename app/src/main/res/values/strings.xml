@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PopCornMiner</string>
+    <string name="app_name">Popcorn Miner</string>
     <string name="botao_saldo">Saldo</string>
     <string name="botao_carteira">Carteira</string>
     <string name="botao_transferencia">Transferência</string>
@@ -15,18 +15,21 @@
     <string name="title_notifications">Notifications</string>
     <string name="title_activity_login">Efetuar Login</string>
     <string name="title_activity_cadastrarlogin">Efetuar Cadastro</string>
-    <string name="title_activity_menu">Menu</string>
-    <string name="title_activity_carteira">Minhas Carteiras</string>
+    <string name="title_activity_menu">Menu Porcorn Miner</string>
+    <string name="title_activity_carteira">Carteira</string>
     <string name="title_activity_addcarteira">Adicionar Carteira</string>
+    <string name="title_activity_editarcarteiraactivity">Editar Carteira</string>
     <string name="title_activity_transferencia">Transferência</string>
-    <string name="title_activity_novatransferencia">Pagar ou Receber</string>
-    <string name="title_activity_geradorqrcoe">QR Code Chave Pública</string>
+    <string name="title_activity_novatransferencia">Transferir</string>
+    <string name="title_activity_resetsenha">Resetar Senha</string>
+    <string name="title_activity_geradorqrcoe">Receber</string>
     <string name="logo">logo</string>
 
     <!-- Strings login -->
     <string name="email">E-mail:</string>
     <string name="senha">Senha:</string>
     <string name="insira_seu_email">Insira seu e-mail</string>
+    <string name="insira_seu_email_reset">Insira seu e-mail para reset de senha</string>
     <string name="insira_sua_senha">Insira sua senha</string>
     <string name="cadastrar">Cadastrar</string>
     <string name="entrar">Entrar</string>
@@ -46,12 +49,14 @@
     <!-- ID do Aplicativo do Facebook, prefixado por 'fb'. Ativa as guias personalizadas do Chrome. -->
     <string name="facebook_login_protocol_scheme" translatable="false">fb1801531709890334</string>
     <string name="nao_tem_conta_cadastre">Não tem conta? Cadastre-se</string>
+    <string name="esqueceu_sua_senha">Esqueceu sua senha?</string>
     <string name="wallet">Wallet</string>
     <string name="excluir">Excluir</string>
     <string name="editar">Editar</string>
     <string name="descri_o">Descrição</string>
     <string name="saldo">Saldo</string>
     <string name="imagemTransferencia">imagemTransferencia</string>
+    <string name="atualizar">atualizar</string>
 
 
 </resources>

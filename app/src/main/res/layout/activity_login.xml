@@ -12,7 +12,7 @@
     <ImageView
         android:id="@+id/logoLogin"
         android:layout_width="@dimen/logo_width"
-        android:layout_height="@dimen/logo_heigth"
+        android:layout_height="@dimen/logo_height"
         android:layout_gravity="center"
         app:srcCompat="@drawable/ic_logo_popcorn" />
 
@@ -66,12 +66,30 @@
 
     <TextView
         android:id="@+id/btActivityCadastrar"
-        android:layout_width="200dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="2dp"
         android:gravity="center"
-        android:paddingBottom="7dp"
-        android:paddingTop="7dp"
+        android:paddingBottom="3dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="3dp"
         android:text="@string/nao_tem_conta_cadastre"
-        android:textColor="@android:color/background_dark" />
+        android:textColor="@android:color/background_dark"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/btActivityResetSenha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:gravity="center"
+        android:paddingBottom="3dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="3dp"
+        android:text="@string/esqueceu_sua_senha"
+        android:textColor="@android:color/background_dark"
+        android:textSize="14sp" />
+
 </LinearLayout>
